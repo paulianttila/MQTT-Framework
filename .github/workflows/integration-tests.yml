@@ -27,8 +27,7 @@ jobs:
           
       - name: Install mosquitto
         run: |
-          apt update
-          apt install -y mosquitto
+          sudo apt-get install -y mosquitto
 
       - name: Switch to Current Branch
         run: git checkout ${{ env.BRANCH }}
