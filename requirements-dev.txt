@@ -88,7 +88,7 @@ packaging==22.0
     #   build
     #   limits
     #   pytest
-paho-mqtt==1.6.1
+paho-mqtt==1.5.1
     # via
     #   -r requirements.txt
     #   flask-mqtt
