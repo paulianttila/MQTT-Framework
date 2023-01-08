@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 
+# exit when any command fails
+set -e
+
+PWD=$(pwd)
+
 # set configuration for test app
 export CFG_MQTT_BROKER_URL=localhost
 export CFG_MQTT_BROKER_PORT=1883
-export CFG_WEB_STATIC_DIR=mqtt-framework/MQTT-Framework/example/web/static
-export CFG_WEB_TEMPLATE_DIR=mqtt-framework/MQTT-Framework/example/web/templates
+export CFG_WEB_STATIC_DIR=${PWD}/mqtt-framework/MQTT-Framework/example/web/static
+export CFG_WEB_TEMPLATE_DIR=${PWD}/mqtt-framework/MQTT-Framework/example/web/templates
 export CFG_WEB_PORT=8080
 export CFG_LOG_LEVEL=DEBUG
 export CFG_UPDATE_INTERVAL=1
@@ -25,7 +30,7 @@ start_test_app() {
 
 run_tests() {
   # add testing_utils.py to tavern tests
-  PYTHONPATH=${PYTHONPATH}:tests/integration/
+  PYTHONPATH=${PYTHONPATH}:/${PWD}/mqtt-framework/MQTT-Framework/tests/integration/
   # run tests
   python -m pytest tests/
 }
@@ -35,6 +40,8 @@ clean_up() {
   kill ${TEST_APP_PID}
 }
 
+pwd
+ls -lR
 
 start_test_app
 run_tests
