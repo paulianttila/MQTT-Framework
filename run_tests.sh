@@ -30,8 +30,8 @@ start_test_app() {
 
 run_tests() {
   # add testing_utils.py to tavern tests
-  export PYTHONPATH=${PYTHONPATH}:/${PWD}/tests/integration/
-  env
+  export PYTHONPATH=${PYTHONPATH}:${PWD}/tests/integration/
+
   # run tests
   python -m pytest tests/
 }
@@ -41,8 +41,7 @@ clean_up() {
   kill ${TEST_APP_PID}
 }
 
-pwd
-ls -lR
+echo "Current folder: ${PWD}"
 
 start_test_app
 run_tests
