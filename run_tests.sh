@@ -30,7 +30,8 @@ start_test_app() {
 
 run_tests() {
   # add testing_utils.py to tavern tests
-  PYTHONPATH=${PYTHONPATH}:/${PWD}/tests/integration/
+  export PYTHONPATH=${PYTHONPATH}:/${PWD}/tests/integration/
+  env
   # run tests
   python -m pytest tests/
 }
