@@ -21,7 +21,7 @@ from mqtt_framework.app import App as App, TriggerSource
 from mqtt_framework.config import Config as Config
 
 # current MQTT-Framework version
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 class ReadOnlyDict(dict):
     def __readonly__(self, *args, **kwargs):
