@@ -195,7 +195,7 @@ class Framework:
     def start(self, app: App, config: Config, blocked=False) -> int:
         self._load_config(config)
 
-        if not blocked:
+        if blocked:
             self._install_signal_handlers()
 
         self._app = app
