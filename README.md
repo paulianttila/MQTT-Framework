@@ -14,9 +14,10 @@ Purpose of the library is to simplify the application and minimize the boilerpla
 ## Usage
 
 ```python
-import sys
-from  mqtt_framework import Framework
+from mqtt_framework import Framework
 from mqtt_framework import Config
+from mqtt_framework.callbacks import Callbacks
+from mqtt_framework.app import TriggerSource
 
 class MyConfig(Config):
 
@@ -58,13 +59,13 @@ class MyApp:
         self.logger.debug('do_healthy_check called')
         return True
 
-    def do_update(self) -> None:
-        self.logger.debug('update called')
-        self.logger.debug(f'TEST_VARIABLE from config: {self.app.config["TEST_VARIABLE"]}')
+    def do_update(self, trigger_source: TriggerSource) -> None:
+        self.logger.debug('update called, trigger_source=%s', trigger_source)
+        self.logger.debug(f'TEST_VARIABLE from config: {self.config["TEST_VARIABLE"]}')
         self.counter = self.counter + 1
         self.publish_value_to_mqtt_topic('counter', self.counter)
 
 if __name__ == '__main__':
-    sys.exit(Framework().start(MyApp(), MyConfig(), blocked=True))
+    Framework().start(MyApp(), MyConfig(), blocked=True)
 
 ```
