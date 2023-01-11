@@ -248,6 +248,7 @@ class Framework:
                 self._scheduler.shutdown(wait=True)
                 self._stop_server()
                 self._mqtt.unsubscribe_all()
+                self._publish_value_to_mqtt_topic('status', 'offline', True)
                 self._mqtt._disconnect()
             except Exception as e:
                 self._flask.logger.exception('Error occured')
