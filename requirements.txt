@@ -70,7 +70,7 @@ tzdata==2022.7
     # via pytz-deprecation-shim
 tzlocal==4.2
     # via apscheduler
-werkzeug==2.2.2
+werkzeug==2.2.3
     # via flask
 wrapt==1.14.1
     # via deprecated
