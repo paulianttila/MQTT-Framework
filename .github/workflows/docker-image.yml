@@ -8,6 +8,7 @@ jobs:
   build:
     name: Build & push docker image
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       IMG_NAME: ${{ github.repository }}
     steps:
