@@ -96,8 +96,8 @@ class Framework:
             self._subscribe_to_mqtt_topic('setLogLevel')
             try:
                 self._app.subscribe_to_mqtt_topics()
-            except Exception:
-                self._flask.logger.exception('Error occured')
+            except Exception as e:
+                self._flask.logger.exception('Error occured: %s' % e)
 
         @self._mqtt.on_message()
         def mqtt_message_received(client, userdata, message) -> None:
@@ -113,8 +113,8 @@ class Framework:
             else:
                 try:
                     self._app.mqtt_message_received(topic, data)
-                except Exception:
-                    self._flask.logger.exception('Error occured')
+                except Exception as e:
+                    self._flask.logger.exception('Error occured: %s' % e)
 
         @self._mqtt.on_log()
         def handle_logging(client, userdata, level, buf) -> None:
@@ -261,7 +261,7 @@ class Framework:
                 self._publish_value_to_mqtt_topic('status', 'offline', True)
                 self._mqtt._disconnect()
             except Exception as e:
-                self._flask.logger.exception('Error occured')
+                self._flask.logger.exception('Error occured: %s' % e)
             self._flask.logger.critical('Application stopped')
         else:
             self._flask.logger.debug('Application already stopped')
