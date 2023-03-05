@@ -24,6 +24,7 @@ from mqtt_framework.config import Config as Config
 # current MQTT-Framework version
 __version__ = "1.1.0"
 
+
 class ReadOnlyDict(dict):
     def __readonly__(self, *args, **kwargs):
         raise RuntimeError("Read only configuration")
@@ -37,135 +38,195 @@ class ReadOnlyDict(dict):
     setdefault = __readonly__
     del __readonly__
 
+
 class Framework:
     def __init__(self):
         static_folder = Config.WEB_STATIC_DIR
-        if os.environ.get('CFG_WEB_STATIC_DIR') is not None:
-            static_folder = os.environ.get('CFG_WEB_STATIC_DIR')
+        if os.environ.get("CFG_WEB_STATIC_DIR") is not None:
+            static_folder = os.environ.get("CFG_WEB_STATIC_DIR")
 
         template_folder = Config.WEB_TEMPLATE_DIR
-        if os.environ.get('CFG_WEB_TEMPLATE_DIR') is not None:
-            template_folder = os.environ.get('CFG_WEB_TEMPLATE_DIR')
-        
-        self._flask = Flask(__name__, static_folder=static_folder, template_folder=template_folder)
+        if os.environ.get("CFG_WEB_TEMPLATE_DIR") is not None:
+            template_folder = os.environ.get("CFG_WEB_TEMPLATE_DIR")
+
+        self._flask = Flask(
+            __name__, static_folder=static_folder, template_folder=template_folder
+        )
         self._mqtt = Mqtt()
         self._scheduler = BackgroundScheduler()
         self._metrics_registry = CollectorRegistry()
         self._metrics = PrometheusMetrics(self._flask, registry=self._metrics_registry)
-        self._mqtt_messages_received_metric = Counter('mqtt_messages_received', '', registry=self._metrics_registry)
-        self._mqtt_messages_sent_metric = Counter('mqtt_messages_sent', '', registry=self._metrics_registry)
-        self._do_update_metric = Summary('do_update', 'Time spent in do_update', registry=self._metrics_registry)
-        self._do_update_exception_metric = Counter('do_update_exceptions', 'How many exceptions caused by do_update', registry=self._metrics_registry)
+        self._mqtt_messages_received_metric = Counter(
+            "mqtt_messages_received", "", registry=self._metrics_registry
+        )
+        self._mqtt_messages_sent_metric = Counter(
+            "mqtt_messages_sent", "", registry=self._metrics_registry
+        )
+        self._do_update_metric = Summary(
+            "do_update", "Time spent in do_update", registry=self._metrics_registry
+        )
+        self._do_update_exception_metric = Counter(
+            "do_update_exceptions",
+            "How many exceptions caused by do_update",
+            registry=self._metrics_registry,
+        )
         self._closed = False
         self._limiter = Limiter(
             get_remote_address,
             app=self._flask,
             default_limits=["1 per second"],
             storage_uri="memory://",
-            strategy="fixed-window"
+            strategy="fixed-window",
         )
 
-        @self._flask.route('/healthy')
+        @self._flask.route("/healthy")
         @self._limiter.limit("10 per minute")
         def do_healthy_check():
             if self._app.do_healthy_check():
-                self._flask.logger.debug('Healthy check OK')
-                return 'OK', 200
+                self._flask.logger.debug("Healthy check OK")
+                return "OK", 200
             else:
-                self._flask.logger.warn('Healthy check FAIL')
-                return 'FAIL', 500
+                self._flask.logger.warn("Healthy check FAIL")
+                return "FAIL", 500
 
-        @self._flask.route('/update')
+        @self._flask.route("/update")
         @self._limiter.limit("2 per minute")
         def update():
             self._update_now()
-            return 'OK', 200 
+            return "OK", 200
 
-        @self._flask.route('/printjobs')
+        @self._flask.route("/printjobs")
         @self._limiter.limit("1 per second")
         def printjobs():
             dict = {}
             for job in self._scheduler.get_jobs():
-                dict[str(job.name)] = ("trigger='%s', next_run='%s'" % (job.trigger, job.next_run_time))
+                dict[str(job.name)] = "trigger='%s', next_run='%s'" % (
+                    job.trigger,
+                    job.next_run_time,
+                )
             return dict, 200
 
         @self._mqtt.on_connect()
         def handle_connect(client, userdata, flags, rc) -> None:
-            self._publish_value_to_mqtt_topic('status', 'online', True)
-            self._subscribe_to_mqtt_topic('updateNow')
-            self._subscribe_to_mqtt_topic('setLogLevel')
+            self._publish_value_to_mqtt_topic("status", "online", True)
+            self._subscribe_to_mqtt_topic("updateNow")
+            self._subscribe_to_mqtt_topic("setLogLevel")
             try:
                 self._app.subscribe_to_mqtt_topics()
             except Exception as e:
-                self._flask.logger.exception('Error occured: %s' % e)
+                self._flask.logger.exception("Error occured: %s" % e)
 
         @self._mqtt.on_message()
         def mqtt_message_received(client, userdata, message) -> None:
             self._mqtt_messages_received_metric.inc()
-            data = str(message.payload.decode('utf-8'))
-            self._flask.logger.warning('MQTT message received: topic=%s, qos=%s, data: %s', message.topic, str(message.qos), data)
-            topic = message.topic.removeprefix(self._flask.config['MQTT_TOPIC_PREFIX'])
-            
-            if topic == 'updateNow' and data.lower() in ('yes', 'true', '1'):
+            data = str(message.payload.decode("utf-8"))
+            self._flask.logger.warning(
+                "MQTT message received: topic=%s, qos=%s, data: %s",
+                message.topic,
+                str(message.qos),
+                data,
+            )
+            topic = message.topic.removeprefix(self._flask.config["MQTT_TOPIC_PREFIX"])
+
+            if topic == "updateNow" and data.lower() in ("yes", "true", "1"):
                 self._update_now()
-            elif topic == 'setLogLevel' and data.upper() in ('DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'):
+            elif topic == "setLogLevel" and data.upper() in (
+                "DEBUG",
+                "INFO",
+                "WARNING",
+                "ERROR",
+                "CRITICAL",
+            ):
                 self._flask.logger.setLevel(data.upper())
             else:
                 try:
                     self._app.mqtt_message_received(topic, data)
                 except Exception as e:
-                    self._flask.logger.exception('Error occured: %s' % e)
+                    self._flask.logger.exception("Error occured: %s" % e)
 
         @self._mqtt.on_log()
         def handle_logging(client, userdata, level, buf) -> None:
-            self._flask.logger.debug('MQTT: %s', buf)
+            self._flask.logger.debug("MQTT: %s", buf)
 
     def _to_full_mqtt_topic_name(self, topic: str) -> str:
-        return self._flask.config['MQTT_TOPIC_PREFIX'] + topic
+        return self._flask.config["MQTT_TOPIC_PREFIX"] + topic
 
     def _subscribe_to_mqtt_topic(self, topic: str) -> None:
         fulltopic = self._to_full_mqtt_topic_name(topic)
-        self._flask.logger.debug('Subscribe to MQTT topic: %s', fulltopic)
+        self._flask.logger.debug("Subscribe to MQTT topic: %s", fulltopic)
         self._mqtt.subscribe(fulltopic)
 
-    def _publish_value_to_mqtt_topic(self, topic: str, value: str, retain=False) -> None:
+    def _publish_value_to_mqtt_topic(
+        self, topic: str, value: str, retain=False
+    ) -> None:
         self._mqtt_messages_sent_metric.inc()
         try:
-            self._mqtt.publish(self._to_full_mqtt_topic_name(topic), value, retain=retain)
+            self._mqtt.publish(
+                self._to_full_mqtt_topic_name(topic), value, retain=retain
+            )
         except Exception:
             pass
 
     def _start_server(self):
-        self._flask.logger.debug('Start WSGIServer')
-        self._WSGIServer = WSGIServer(('0.0.0.0', self._flask.config['WEB_PORT']), self._flask)
-        self._WSGIServer.start() # blocking
-        self._flask.logger.debug('WSGIServer stopped')
- 
+        self._flask.logger.debug("Start WSGIServer")
+        self._WSGIServer = WSGIServer(
+            ("0.0.0.0", self._flask.config["WEB_PORT"]), self._flask
+        )
+        self._WSGIServer.start()  # blocking
+        self._flask.logger.debug("WSGIServer stopped")
+
     def _stop_server(self):
-        self._flask.logger.debug('Stop WSGIServer')
+        self._flask.logger.debug("Stop WSGIServer")
         self._WSGIServer.stop()
         self._server_thread.join()
 
     def _run_server(self) -> None:
         self._WSGIServer.start()
-    
+
     def _call_do_update(self, trigger_source: TriggerSource) -> None:
         @self._do_update_metric.time()
         @self._do_update_exception_metric.count_exceptions()
         def do():
             self._app.do_update(trigger_source)
+
         do()
 
     def _update_now(self) -> None:
         self._scheduler.remove_all_jobs()
-        self._scheduler.add_job(self._call_do_update, trigger = 'date', args = [TriggerSource.MANUAL], id = 'do_update_manual', max_instances = 1, next_run_time = datetime.now())
-        if self._flask.config['UPDATE_INTERVAL'] > 0: 
-            self._scheduler.add_job(self._call_do_update, name = 'INTERVAL', trigger = 'interval', args = [TriggerSource.INTERVAL], id = 'do_update_interval', max_instances = 1, seconds = self._flask.config['UPDATE_INTERVAL'], next_run_time = datetime.now() + timedelta(seconds=self._flask.config['UPDATE_INTERVAL']))
-        if self._flask.config['UPDATE_CRON_SCHEDULE']: 
-            self._scheduler.add_job(self._call_do_update, name = 'CRON_SCHEDULE', trigger = CronTrigger.from_crontab(self._flask.config['UPDATE_CRON_SCHEDULE']), args = [TriggerSource.CRON], id = 'do_update_cron', max_instances = 1)
+        self._scheduler.add_job(
+            self._call_do_update,
+            trigger="date",
+            args=[TriggerSource.MANUAL],
+            id="do_update_manual",
+            max_instances=1,
+            next_run_time=datetime.now(),
+        )
+        if self._flask.config["UPDATE_INTERVAL"] > 0:
+            self._scheduler.add_job(
+                self._call_do_update,
+                name="INTERVAL",
+                trigger="interval",
+                args=[TriggerSource.INTERVAL],
+                id="do_update_interval",
+                max_instances=1,
+                seconds=self._flask.config["UPDATE_INTERVAL"],
+                next_run_time=datetime.now()
+                + timedelta(seconds=self._flask.config["UPDATE_INTERVAL"]),
+            )
+        if self._flask.config["UPDATE_CRON_SCHEDULE"]:
+            self._scheduler.add_job(
+                self._call_do_update,
+                name="CRON_SCHEDULE",
+                trigger=CronTrigger.from_crontab(
+                    self._flask.config["UPDATE_CRON_SCHEDULE"]
+                ),
+                args=[TriggerSource.CRON],
+                id="do_update_cron",
+                max_instances=1,
+            )
 
     def _signal_handler(self, sig, frame) -> None:
-        self._flask.logger.debug('Signal %s received', signal.strsignal(sig))
+        self._flask.logger.debug("Signal %s received", signal.strsignal(sig))
         self.shutdown()
 
     def _install_signal_handlers(self) -> None:
@@ -174,28 +235,28 @@ class Framework:
 
     def _load_config(self, config: Config) -> None:
         self._flask.config.from_object(config)
-        self._flask.config.from_prefixed_env('CFG')
-        
-        if self._flask.config['LOG_LEVEL'] == 'DEBUG':
-            logging.getLogger('werkzeug').setLevel(logging.DEBUG)
+        self._flask.config.from_prefixed_env("CFG")
+
+        if self._flask.config["LOG_LEVEL"] == "DEBUG":
+            logging.getLogger("werkzeug").setLevel(logging.DEBUG)
         else:
-            logging.getLogger('werkzeug').setLevel(logging.ERROR)
-        self._flask.logger.setLevel(self._flask.config['LOG_LEVEL'])
+            logging.getLogger("werkzeug").setLevel(logging.ERROR)
+        self._flask.logger.setLevel(self._flask.config["LOG_LEVEL"])
 
     def _start_flask(self):
         self._server_thread = threading.Thread(target=self._start_server)
         self._server_thread.start()
 
     def _do_wait(self):
-        self._flask.logger.debug('Start blocking')
-        while not self._flask.config['EXIT']:
+        self._flask.logger.debug("Start blocking")
+        while not self._flask.config["EXIT"]:
             try:
                 time.sleep(1)
             except KeyboardInterrupt:
-                self._flask.logger.debug('KeyboardInterrupt received')
+                self._flask.logger.debug("KeyboardInterrupt received")
                 self.shutdown()
                 break
-        
+
     def start(self, app: App, config: Config, blocked=False) -> int:
         self._load_config(config)
 
@@ -206,7 +267,7 @@ class Framework:
         self._start_flask()
 
         # share some variables and functions to app
-        class CallbacksImpl():
+        class CallbacksImpl:
             def __init__(self, obj):
                 self.obj = obj
 
@@ -219,27 +280,70 @@ class Framework:
             def get_metrics_registry(self) -> CollectorRegistry:
                 return self.obj._metrics_registry
 
-            def add_url_rule(self, rule: str, endpoint=None, view_func=None, provide_automatic_options=None, **options) -> None:
-                self.obj._flask.add_url_rule(rule, endpoint=endpoint, view_func=view_func, provide_automatic_options=provide_automatic_options, **options)
+            def add_url_rule(
+                self,
+                rule: str,
+                endpoint=None,
+                view_func=None,
+                provide_automatic_options=None,
+                **options
+            ) -> None:
+                self.obj._flask.add_url_rule(
+                    rule,
+                    endpoint=endpoint,
+                    view_func=view_func,
+                    provide_automatic_options=provide_automatic_options,
+                    **options
+                )
 
-            def publish_value_to_mqtt_topic(self, topic: str, value: str, retain=False) -> None:
+            def publish_value_to_mqtt_topic(
+                self, topic: str, value: str, retain=False
+            ) -> None:
                 self.obj._publish_value_to_mqtt_topic(topic, value, retain=retain)
 
             def subscribe_to_mqtt_topic(self, topic: str) -> None:
                 self.obj._subscribe_to_mqtt_topic(topic)
 
-
-        self._flask.logger.critical('%s version %s started, framework version %s', app.__class__.__name__, app.get_version(), __version__)
+        self._flask.logger.critical(
+            "%s version %s started, framework version %s",
+            app.__class__.__name__,
+            app.get_version(),
+            __version__,
+        )
 
         self._app.init(CallbacksImpl(self))
         self._mqtt.init_app(self._flask)
 
-        if self._flask.config['UPDATE_INTERVAL'] > 0:
-            self._flask.logger.debug('Schedule interval job to happen in every %s sec', self._flask.config['UPDATE_INTERVAL'])
-            self._scheduler.add_job(self._call_do_update, name = 'INTERVAL', trigger = 'interval', args = [TriggerSource.INTERVAL], id = 'do_update_interval', max_instances = 1, seconds = self._flask.config['UPDATE_INTERVAL'], next_run_time = datetime.now() + timedelta(seconds=self._flask.config['DELAY_BEFORE_FIRST_TRY']))
-        if self._flask.config['UPDATE_CRON_SCHEDULE']:
-            self._flask.logger.debug('Schedule cron job: %s', self._flask.config['UPDATE_CRON_SCHEDULE'])
-            self._scheduler.add_job(self._call_do_update, name = 'CRON_SCHEDULE', trigger = CronTrigger.from_crontab(self._flask.config['UPDATE_CRON_SCHEDULE']), args = [TriggerSource.CRON], id = 'do_update_cron', max_instances = 1)
+        if self._flask.config["UPDATE_INTERVAL"] > 0:
+            self._flask.logger.debug(
+                "Schedule interval job to happen in every %s sec",
+                self._flask.config["UPDATE_INTERVAL"],
+            )
+            self._scheduler.add_job(
+                self._call_do_update,
+                name="INTERVAL",
+                trigger="interval",
+                args=[TriggerSource.INTERVAL],
+                id="do_update_interval",
+                max_instances=1,
+                seconds=self._flask.config["UPDATE_INTERVAL"],
+                next_run_time=datetime.now()
+                + timedelta(seconds=self._flask.config["DELAY_BEFORE_FIRST_TRY"]),
+            )
+        if self._flask.config["UPDATE_CRON_SCHEDULE"]:
+            self._flask.logger.debug(
+                "Schedule cron job: %s", self._flask.config["UPDATE_CRON_SCHEDULE"]
+            )
+            self._scheduler.add_job(
+                self._call_do_update,
+                name="CRON_SCHEDULE",
+                trigger=CronTrigger.from_crontab(
+                    self._flask.config["UPDATE_CRON_SCHEDULE"]
+                ),
+                args=[TriggerSource.CRON],
+                id="do_update_cron",
+                max_instances=1,
+            )
 
         self._scheduler.start()
 
@@ -251,17 +355,17 @@ class Framework:
     def shutdown(self) -> None:
         if not self._closed:
             self._closed = True
-            self._flask.config['EXIT'] = True
-            self._flask.logger.info('Closing...')
+            self._flask.config["EXIT"] = True
+            self._flask.logger.info("Closing...")
             try:
                 self._app.stop()
                 self._scheduler.shutdown(wait=True)
                 self._stop_server()
                 self._mqtt.unsubscribe_all()
-                self._publish_value_to_mqtt_topic('status', 'offline', True)
+                self._publish_value_to_mqtt_topic("status", "offline", True)
                 self._mqtt._disconnect()
             except Exception as e:
-                self._flask.logger.exception('Error occured: %s' % e)
-            self._flask.logger.critical('Application stopped')
+                self._flask.logger.exception("Error occured: %s" % e)
+            self._flask.logger.critical("Application stopped")
         else:
-            self._flask.logger.debug('Application already stopped')
+            self._flask.logger.debug("Application already stopped")
