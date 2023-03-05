@@ -143,6 +143,8 @@ rich==12.6.0
     #   flask-limiter
 ruamel-yaml==0.17.21
     # via pykwalify
+ruff==0.0.254
+    # via -r requirements-dev.in
 six==1.16.0
     # via
     #   -r requirements.txt
