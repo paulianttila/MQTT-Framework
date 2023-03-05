@@ -44,6 +44,10 @@ jobs:
           pip install -r requirements-dev.txt
           pip install -e .
 
+      # Include `--format=github` to enable automatic inline annotations.
+      - name: Run Ruff
+        run: ruff check --format=github .
+
       - name: Run unit and integration tests
         run: |
           chmod +x run_tests.sh
