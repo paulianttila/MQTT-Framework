@@ -15,7 +15,7 @@ class MyConfig(Config):
 def test_config():
     myconfig = MyConfig()
 
-    assert myconfig.EXIT == False
+    assert myconfig.EXIT is False
     assert myconfig.LOG_LEVEL == 'INFO'
     assert myconfig.UPDATE_INTERVAL == 60
     assert myconfig.DELAY_BEFORE_FIRST_TRY == 5
@@ -28,14 +28,14 @@ def test_config():
     assert myconfig.MQTT_USERNAME == ''
     assert myconfig.MQTT_PASSWORD == ''
     assert myconfig.MQTT_KEEPALIVE == 30
-    assert myconfig.MQTT_TLS_ENABLED == False
-    assert myconfig.MQTT_TLS_CA_CERTS == None
-    assert myconfig.MQTT_TLS_CERTFILE == None
-    assert myconfig.MQTT_TLS_KEYFILE == None
+    assert myconfig.MQTT_TLS_ENABLED is False
+    assert myconfig.MQTT_TLS_CA_CERTS is None
+    assert myconfig.MQTT_TLS_CERTFILE is None
+    assert myconfig.MQTT_TLS_KEYFILE is None
     assert myconfig.MQTT_TLS_VERSION == ssl.PROTOCOL_TLSv1_2
-    assert myconfig.MQTT_TLS_INSECURE == False
+    assert myconfig.MQTT_TLS_INSECURE is False
     assert myconfig.MQTT_LAST_WILL_MESSAGE == 'offline'
-    assert myconfig.MQTT_LAST_WILL_RETAIN == True
+    assert myconfig.MQTT_LAST_WILL_RETAIN is True
 
     assert myconfig.MQTT_CLIENT_ID == 'myapp'
     assert myconfig.MQTT_TOPIC_PREFIX == 'myapp/'
