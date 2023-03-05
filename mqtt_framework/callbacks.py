@@ -1,7 +1,6 @@
 import logging
 from typing import Protocol, runtime_checkable
 
-from flask import Flask
 from prometheus_client import CollectorRegistry
 
 @runtime_checkable
