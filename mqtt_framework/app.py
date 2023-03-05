@@ -6,6 +6,7 @@ from mqtt_framework.callbacks import Callbacks
 class TriggerSource(Enum):
     INTERVAL = 1
     MANUAL = 2
+    CRON = 3
 
 @runtime_checkable
 class App(Protocol):

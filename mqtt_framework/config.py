@@ -8,6 +8,7 @@ class Config(object):
     LOG_LEVEL = 'INFO'
     UPDATE_INTERVAL = 60
     DELAY_BEFORE_FIRST_TRY = 5
+    UPDATE_CRON_SCHEDULE = None
     WEB_PORT = 5000
     WEB_STATIC_DIR = 'web/static'
     WEB_TEMPLATE_DIR = 'web/templates'

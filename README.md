@@ -17,7 +17,8 @@ Purpose of the library is to simplify the application and minimize the boilerpla
 |----------------------------|-------------|----------------------------------------------------------------------------------------------------------------|
 | CFG_APP_NAME               |             | Name of the app.                                                                                               |
 | CFG_LOG_LEVEL              | INFO        | Logging level: CRITICAL, ERROR, WARNING, INFO or DEBUG                                                         |
-| CFG_UPDATE_INTERVAL        | 60          | Update interval in seconds.                                                                                    |
+| CFG_UPDATE_CRON_SCHEDULE   |             | Update interval in cron format.                                                                                |
+| CFG_UPDATE_INTERVAL        | 60          | Update interval in seconds. 0 = disabled                                                                       |
 | CFG_DELAY_BEFORE_FIRST_TRY | 5           | Delay before first try in seconds.                                                                             |
 | CFG_MQTT_CLIENT_ID         | <APP_NAME>  | the unique client id string used when connecting to the broker.                                                |
 | CFG_MQTT_BROKER_URL        | 127.0.0.1   | MQTT broker URL that should be used for the connection.                                                        |

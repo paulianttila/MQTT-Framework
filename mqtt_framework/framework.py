@@ -12,6 +12,7 @@ from cheroot.wsgi import Server as WSGIServer
 
 from flask_mqtt import Mqtt
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from prometheus_flask_exporter import PrometheusMetrics
@@ -21,7 +22,7 @@ from mqtt_framework.app import App as App, TriggerSource
 from mqtt_framework.config import Config as Config
 
 # current MQTT-Framework version
-__version__ = "1.0.1"
+__version__ = "1.1.0"
 
 class ReadOnlyDict(dict):
     def __readonly__(self, *args, **kwargs):
@@ -83,10 +84,10 @@ class Framework:
         @self._flask.route('/printjobs')
         @self._limiter.limit("1 per second")
         def printjobs():
-            result = ''
+            dict = {}
             for job in self._scheduler.get_jobs():
-                result = result + ('name: %s, trigger: %s, next run: %s, handler: %s' % (job.name, job.trigger, job.next_run_time, job.func)) + ' | '
-            return result, 200
+                dict[str(job.name)] = ("trigger='%s', next_run='%s'" % (job.trigger, job.next_run_time))
+            return dict, 200
 
         @self._mqtt.on_connect()
         def handle_connect(client, userdata, flags, rc) -> None:
@@ -158,7 +159,10 @@ class Framework:
     def _update_now(self) -> None:
         self._scheduler.remove_all_jobs()
         self._scheduler.add_job(self._call_do_update, trigger = 'date', args = [TriggerSource.MANUAL], id = 'do_update_manual', max_instances = 1, next_run_time = datetime.now())
-        self._scheduler.add_job(self._call_do_update, trigger = 'interval', args = [TriggerSource.INTERVAL], id = 'do_update_interval', max_instances = 1, seconds = self._flask.config['UPDATE_INTERVAL'], next_run_time = datetime.now() + timedelta(seconds=self._flask.config['UPDATE_INTERVAL']))
+        if self._flask.config['UPDATE_INTERVAL'] > 0: 
+            self._scheduler.add_job(self._call_do_update, name = 'INTERVAL', trigger = 'interval', args = [TriggerSource.INTERVAL], id = 'do_update_interval', max_instances = 1, seconds = self._flask.config['UPDATE_INTERVAL'], next_run_time = datetime.now() + timedelta(seconds=self._flask.config['UPDATE_INTERVAL']))
+        if self._flask.config['UPDATE_CRON_SCHEDULE']: 
+            self._scheduler.add_job(self._call_do_update, name = 'CRON_SCHEDULE', trigger = CronTrigger.from_crontab(self._flask.config['UPDATE_CRON_SCHEDULE']), args = [TriggerSource.CRON], id = 'do_update_cron', max_instances = 1)
 
     def _signal_handler(self, sig, frame) -> None:
         self._flask.logger.debug('Signal %s received', signal.strsignal(sig))
@@ -230,7 +234,13 @@ class Framework:
         self._app.init(CallbacksImpl(self))
         self._mqtt.init_app(self._flask)
 
-        self._scheduler.add_job(self._call_do_update, trigger = 'interval', args = [TriggerSource.INTERVAL], id = 'do_update_interval', max_instances = 1, seconds = self._flask.config['UPDATE_INTERVAL'], next_run_time = datetime.now() + timedelta(seconds=self._flask.config['DELAY_BEFORE_FIRST_TRY']))
+        if self._flask.config['UPDATE_INTERVAL'] > 0:
+            self._flask.logger.debug('Schedule interval job to happen in every %s sec', self._flask.config['UPDATE_INTERVAL'])
+            self._scheduler.add_job(self._call_do_update, name = 'INTERVAL', trigger = 'interval', args = [TriggerSource.INTERVAL], id = 'do_update_interval', max_instances = 1, seconds = self._flask.config['UPDATE_INTERVAL'], next_run_time = datetime.now() + timedelta(seconds=self._flask.config['DELAY_BEFORE_FIRST_TRY']))
+        if self._flask.config['UPDATE_CRON_SCHEDULE']:
+            self._flask.logger.debug('Schedule cron job: %s', self._flask.config['UPDATE_CRON_SCHEDULE'])
+            self._scheduler.add_job(self._call_do_update, name = 'CRON_SCHEDULE', trigger = CronTrigger.from_crontab(self._flask.config['UPDATE_CRON_SCHEDULE']), args = [TriggerSource.CRON], id = 'do_update_cron', max_instances = 1)
+
         self._scheduler.start()
 
         if blocked:
