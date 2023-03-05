@@ -39,7 +39,7 @@ else:
         license="MIT",
         author="Pauli Anttila",
         author_email="pauli.anttila@gmail.com",
-        description="Simple application framework for docker container based MQTT applications",
+        description="Simple application framework for docker container based MQTT apps",
         long_description=long_description,
         long_description_content_type="text/markdown",
         packages=["mqtt_framework"],
@@ -50,7 +50,7 @@ else:
             "APScheduler",
             "Flask-MQTT",
             "prometheus-flask-exporter",
-            "Flask-Limiter"
+            "Flask-Limiter",
         ],
         classifiers=[
             "Development Status :: 5 - Production/Stable",
