@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 import time
 
 from flask import Flask as Flask
+from flask import jsonify
 from cheroot.wsgi import Server as WSGIServer
 
 from flask_mqtt import Mqtt
@@ -95,16 +96,20 @@ class Framework:
             self._update_now()
             return "OK", 200
 
-        @self._flask.route("/printjobs")
+        @self._flask.route("/jobs")
         @self._limiter.limit("1 per second")
         def printjobs():
-            dict = {}
+            jobs = []
             for job in self._scheduler.get_jobs():
-                dict[str(job.name)] = "trigger='%s', next_run='%s'" % (
-                    job.trigger,
-                    job.next_run_time,
+                jobs.append(
+                    {
+                        "id": str(job.id),
+                        "name": str(job.name),
+                        "trigger": str(job.trigger),
+                        "next_run": str(job.next_run_time),
+                    }
                 )
-            return dict, 200
+            return jsonify({'jobs': jobs}), 200
 
         @self._mqtt.on_connect()
         def handle_connect(client, userdata, flags, rc) -> None:
