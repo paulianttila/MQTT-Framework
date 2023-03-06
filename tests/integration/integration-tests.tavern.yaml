@@ -57,7 +57,7 @@ stages:
 
   - name: step6, test printjobs
     request:
-      url: http://localhost:8080/printjobs
+      url: http://localhost:8080/jobs
       method: GET
       timeout: 3
     response:
