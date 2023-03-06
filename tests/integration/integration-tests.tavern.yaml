@@ -55,7 +55,7 @@ stages:
       payload: '10' 
       timeout: 30
 
-  - name: step6, test printjobs
+  - name: step6, test jobs interface
     request:
       url: http://localhost:8080/jobs
       method: GET
