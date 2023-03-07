@@ -176,7 +176,7 @@ class Framework:
         except Exception:
             pass
 
-    def _start_server(self):
+    def _start_server(self) -> None:
         self._flask.logger.trace("Start WSGIServer")
         self._WSGIServer = WSGIServer(
             ("0.0.0.0", self._flask.config["WEB_PORT"]), self._flask
@@ -184,7 +184,7 @@ class Framework:
         self._WSGIServer.start()  # blocking
         self._flask.logger.trace("WSGIServer stopped")
 
-    def _stop_server(self):
+    def _stop_server(self) -> None:
         self._flask.logger.trace("Stop WSGIServer")
         self._WSGIServer.stop()
         self._server_thread.join()
@@ -233,11 +233,11 @@ class Framework:
             logging.getLogger("werkzeug").setLevel(logging.ERROR)
         self._flask.logger.setLevel(self._flask.config["LOG_LEVEL"])
 
-    def _start_flask(self):
+    def _start_flask(self) -> None:
         self._server_thread = threading.Thread(target=self._start_server)
         self._server_thread.start()
 
-    def _do_wait(self):
+    def _do_wait(self) -> None:
         self._flask.logger.trace("Start blocking")
         while not self._flask.config["EXIT"]:
             try:
@@ -247,7 +247,7 @@ class Framework:
                 self.shutdown()
                 break
 
-    def _add_trace_level_to_logger(self):
+    def _add_trace_level_to_logger(self) -> None:
         TRACE_LOG_LEVEL = 5
         logging.addLevelName(TRACE_LOG_LEVEL, "TRACE")
 
@@ -257,7 +257,7 @@ class Framework:
 
         logging.Logger.trace = trace
 
-    def add_scheduler_jobs(self, next_run_time):
+    def add_scheduler_jobs(self, next_run_time) -> None:
         if self._flask.config["UPDATE_INTERVAL"] > 0:
             self._flask.logger.trace(
                 "Schedule interval job to happen in every %s sec",
