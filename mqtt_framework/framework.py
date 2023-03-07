@@ -18,6 +18,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from prometheus_flask_exporter import PrometheusMetrics
 from prometheus_client import CollectorRegistry, Counter, Summary
+import tzlocal
 
 from mqtt_framework.app import App as App, TriggerSource
 from mqtt_framework.config import Config as Config
@@ -56,7 +57,7 @@ class Framework:
             __name__, static_folder=static_folder, template_folder=template_folder
         )
         self._mqtt = Mqtt()
-        self._scheduler = BackgroundScheduler()
+        self._scheduler = BackgroundScheduler(timezone=str(tzlocal.get_localzone()))
         self._metrics_registry = CollectorRegistry()
         self._metrics = PrometheusMetrics(self._flask, registry=self._metrics_registry)
         self._mqtt_messages_received_metric = Counter(
