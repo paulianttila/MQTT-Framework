@@ -112,7 +112,7 @@ class Framework:
                         "next_run": str(job.next_run_time),
                     }
                 )
-            return jsonify({'jobs': jobs}), 200
+            return jsonify({"jobs": jobs}), 200
 
         @self._mqtt.on_connect()
         def handle_connect(client, userdata, flags, rc) -> None:
@@ -227,7 +227,7 @@ class Framework:
         self._flask.config.from_object(config)
         self._flask.config.from_prefixed_env("CFG")
 
-        if self._flask.config["LOG_LEVEL"] in [ "TRACE "]:
+        if self._flask.config["LOG_LEVEL"] in ["TRACE "]:
             logging.getLogger("werkzeug").setLevel(logging.DEBUG)
         else:
             logging.getLogger("werkzeug").setLevel(logging.ERROR)
@@ -248,14 +248,14 @@ class Framework:
                 break
 
     def _add_trace_level_to_logger(self):
-            TRACE_LOG_LEVEL = 5
-            logging.addLevelName(TRACE_LOG_LEVEL, "TRACE")
+        TRACE_LOG_LEVEL = 5
+        logging.addLevelName(TRACE_LOG_LEVEL, "TRACE")
 
-            def trace(self, message, *args, **kwargs):
-                if self.isEnabledFor(TRACE_LOG_LEVEL):
-                    self._log(TRACE_LOG_LEVEL, message, args, **kwargs)
+        def trace(self, message, *args, **kwargs):
+            if self.isEnabledFor(TRACE_LOG_LEVEL):
+                self._log(TRACE_LOG_LEVEL, message, args, **kwargs)
 
-            logging.Logger.trace = trace 
+        logging.Logger.trace = trace
 
     def add_scheduler_jobs(self, next_run_time):
         if self._flask.config["UPDATE_INTERVAL"] > 0:
