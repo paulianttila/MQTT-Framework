@@ -210,29 +210,10 @@ class Framework:
             max_instances=1,
             next_run_time=datetime.now(),
         )
-        if self._flask.config["UPDATE_INTERVAL"] > 0:
-            self._scheduler.add_job(
-                self._call_do_update,
-                name="INTERVAL",
-                trigger="interval",
-                args=[TriggerSource.INTERVAL],
-                id="do_update_interval",
-                max_instances=1,
-                seconds=self._flask.config["UPDATE_INTERVAL"],
-                next_run_time=datetime.now()
-                + timedelta(seconds=self._flask.config["UPDATE_INTERVAL"]),
-            )
-        if self._flask.config["UPDATE_CRON_SCHEDULE"]:
-            self._scheduler.add_job(
-                self._call_do_update,
-                name="CRON_SCHEDULE",
-                trigger=CronTrigger.from_crontab(
-                    self._flask.config["UPDATE_CRON_SCHEDULE"]
-                ),
-                args=[TriggerSource.CRON],
-                id="do_update_cron",
-                max_instances=1,
-            )
+        self.add_scheduler_jobs(
+            next_run_time=datetime.now()
+            + timedelta(seconds=self._flask.config["UPDATE_INTERVAL"])
+        )
 
     def _signal_handler(self, sig, frame) -> None:
         self._flask.logger.trace("Signal %s received", signal.strsignal(sig))
@@ -276,6 +257,36 @@ class Framework:
 
             logging.Logger.trace = trace 
 
+    def add_scheduler_jobs(self, next_run_time):
+        if self._flask.config["UPDATE_INTERVAL"] > 0:
+            self._flask.logger.trace(
+                "Schedule interval job to happen in every %s sec",
+                self._flask.config["UPDATE_INTERVAL"],
+            )
+            self._scheduler.add_job(
+                self._call_do_update,
+                name="INTERVAL",
+                trigger="interval",
+                args=[TriggerSource.INTERVAL],
+                id="do_update_interval",
+                max_instances=1,
+                seconds=self._flask.config["UPDATE_INTERVAL"],
+                next_run_time=next_run_time,
+            )
+        if self._flask.config["UPDATE_CRON_SCHEDULE"]:
+            self._flask.logger.trace(
+                "Schedule cron job: %s", self._flask.config["UPDATE_CRON_SCHEDULE"]
+            )
+            self._scheduler.add_job(
+                self._call_do_update,
+                name="CRON_SCHEDULE",
+                trigger=CronTrigger.from_crontab(
+                    self._flask.config["UPDATE_CRON_SCHEDULE"]
+                ),
+                args=[TriggerSource.CRON],
+                id="do_update_cron",
+                max_instances=1,
+            )
 
     def start(self, app: App, config: Config, blocked=False) -> int:
         self._load_config(config)
@@ -333,38 +344,10 @@ class Framework:
 
         self._app.init(CallbacksImpl(self))
         self._mqtt.init_app(self._flask)
-
-        if self._flask.config["UPDATE_INTERVAL"] > 0:
-            self._flask.logger.trace(
-                "Schedule interval job to happen in every %s sec",
-                self._flask.config["UPDATE_INTERVAL"],
-            )
-            self._scheduler.add_job(
-                self._call_do_update,
-                name="INTERVAL",
-                trigger="interval",
-                args=[TriggerSource.INTERVAL],
-                id="do_update_interval",
-                max_instances=1,
-                seconds=self._flask.config["UPDATE_INTERVAL"],
-                next_run_time=datetime.now()
-                + timedelta(seconds=self._flask.config["DELAY_BEFORE_FIRST_TRY"]),
-            )
-        if self._flask.config["UPDATE_CRON_SCHEDULE"]:
-            self._flask.logger.trace(
-                "Schedule cron job: %s", self._flask.config["UPDATE_CRON_SCHEDULE"]
-            )
-            self._scheduler.add_job(
-                self._call_do_update,
-                name="CRON_SCHEDULE",
-                trigger=CronTrigger.from_crontab(
-                    self._flask.config["UPDATE_CRON_SCHEDULE"]
-                ),
-                args=[TriggerSource.CRON],
-                id="do_update_cron",
-                max_instances=1,
-            )
-
+        self.add_scheduler_jobs(
+            next_run_time=datetime.now()
+            + timedelta(seconds=self._flask.config["DELAY_BEFORE_FIRST_TRY"])
+        )
         self._scheduler.start()
 
         if blocked:
