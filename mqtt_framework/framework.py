@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import contextlib
 import os
 import signal
 import threading
@@ -122,7 +123,7 @@ class Framework:
             try:
                 self._app.subscribe_to_mqtt_topics()
             except Exception as e:
-                self._flask.logger.exception("Error occured: %s" % e)
+                self._flask.logger.exception(f"Error occured: {e}")
 
         @self._mqtt.on_message()
         def mqtt_message_received(client, userdata, message) -> None:
@@ -136,22 +137,22 @@ class Framework:
             )
             topic = message.topic.removeprefix(self._flask.config["MQTT_TOPIC_PREFIX"])
 
-            if topic == "updateNow" and data.lower() in ("yes", "true", "1"):
+            if topic == "updateNow" and data.lower() in {"yes", "true", "1"}:
                 self._update_now()
-            elif topic == "setLogLevel" and data.upper() in (
+            elif topic == "setLogLevel" and data.upper() in {
                 "TRACE",
                 "DEBUG",
                 "INFO",
                 "WARNING",
                 "ERROR",
                 "CRITICAL",
-            ):
+            }:
                 self._flask.logger.setLevel(data.upper())
             else:
                 try:
                     self._app.mqtt_message_received(topic, data)
                 except Exception as e:
-                    self._flask.logger.exception("Error occured: %s" % e)
+                    self._flask.logger.exception(f"Error occured: {e}")
 
         @self._mqtt.on_log()
         def handle_logging(client, userdata, level, buf) -> None:
@@ -169,12 +170,10 @@ class Framework:
         self, topic: str, value: str, retain=False
     ) -> None:
         self._mqtt_messages_sent_metric.inc()
-        try:
+        with contextlib.suppress(Exception):
             self._mqtt.publish(
                 self._to_full_mqtt_topic_name(topic), value, retain=retain
             )
-        except Exception:
-            pass
 
     def _start_server(self) -> None:
         self._flask.logger.trace("Start WSGIServer")
@@ -296,6 +295,12 @@ class Framework:
 
         self._app = app
         self._start_flask()
+        self._flask.logger.critical(
+            "%s version %s started, framework version %s",
+            app.__class__.__name__,
+            app.get_version(),
+            __version__,
+        )
 
         # share some variables and functions to app
         class CallbacksImpl:
@@ -317,14 +322,14 @@ class Framework:
                 endpoint=None,
                 view_func=None,
                 provide_automatic_options=None,
-                **options
+                **options,
             ) -> None:
                 self.obj._flask.add_url_rule(
                     rule,
                     endpoint=endpoint,
                     view_func=view_func,
                     provide_automatic_options=provide_automatic_options,
-                    **options
+                    **options,
                 )
 
             def publish_value_to_mqtt_topic(
@@ -335,13 +340,6 @@ class Framework:
             def subscribe_to_mqtt_topic(self, topic: str) -> None:
                 self.obj._subscribe_to_mqtt_topic(topic)
 
-        self._flask.logger.critical(
-            "%s version %s started, framework version %s",
-            app.__class__.__name__,
-            app.get_version(),
-            __version__,
-        )
-
         self._app.init(CallbacksImpl(self))
         self._mqtt.init_app(self._flask)
         self.add_scheduler_jobs(
@@ -349,11 +347,17 @@ class Framework:
             + timedelta(seconds=self._flask.config["DELAY_BEFORE_FIRST_TRY"])
         )
         self._scheduler.start()
-
         if blocked:
             self._do_wait()
-
         return 0
+
+    def _shutdown(self) -> None:
+        self._app.stop()
+        self._scheduler.shutdown(wait=True)
+        self._stop_server()
+        self._mqtt.unsubscribe_all()
+        self._publish_value_to_mqtt_topic("status", "offline", True)
+        self._mqtt._disconnect()
 
     def shutdown(self) -> None:
         if not self._closed:
@@ -361,14 +365,9 @@ class Framework:
             self._flask.config["EXIT"] = True
             self._flask.logger.info("Closing...")
             try:
-                self._app.stop()
-                self._scheduler.shutdown(wait=True)
-                self._stop_server()
-                self._mqtt.unsubscribe_all()
-                self._publish_value_to_mqtt_topic("status", "offline", True)
-                self._mqtt._disconnect()
+                self._shutdown()
             except Exception as e:
-                self._flask.logger.exception("Error occured: %s" % e)
+                self._flask.logger.exception(f"Error occured: {e}")
             self._flask.logger.critical("Application stopped")
         else:
             self._flask.logger.trace("Application already stopped")
