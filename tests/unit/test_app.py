@@ -1,10 +1,10 @@
 from mqtt_framework.app import App
 
-class MyApp:
 
+class MyApp:
     def init(self, app) -> None:
         pass
- 
+
     def get_version(self) -> str:
         pass
 
@@ -23,19 +23,21 @@ class MyApp:
     def do_update(self) -> None:
         pass
 
-class NotApp:
 
+class NotApp:
     def init(self, app) -> None:
         pass
- 
+
     def get_version(self) -> str:
         pass
 
     def stop(self) -> None:
         pass
 
+
 def test_app():
     assert issubclass(MyApp, App)
+
 
 def test_notapp():
     assert not issubclass(NotApp, App)
