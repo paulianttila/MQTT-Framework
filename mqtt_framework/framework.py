@@ -42,6 +42,8 @@ class ReadOnlyDict(dict):
 
 class Framework:
     def __init__(self):
+        self._add_trace_level_to_logger()
+
         static_folder = Config.WEB_STATIC_DIR
         if os.environ.get("CFG_WEB_STATIC_DIR") is not None:
             static_folder = os.environ.get("CFG_WEB_STATIC_DIR")
@@ -136,6 +138,7 @@ class Framework:
             if topic == "updateNow" and data.lower() in ("yes", "true", "1"):
                 self._update_now()
             elif topic == "setLogLevel" and data.upper() in (
+                "TRACE",
                 "DEBUG",
                 "INFO",
                 "WARNING",
@@ -151,7 +154,7 @@ class Framework:
 
         @self._mqtt.on_log()
         def handle_logging(client, userdata, level, buf) -> None:
-            self._flask.logger.debug("MQTT: %s", buf)
+            self._flask.logger.trace("MQTT: %s", buf)
 
     def _to_full_mqtt_topic_name(self, topic: str) -> str:
         return self._flask.config["MQTT_TOPIC_PREFIX"] + topic
@@ -173,15 +176,15 @@ class Framework:
             pass
 
     def _start_server(self):
-        self._flask.logger.debug("Start WSGIServer")
+        self._flask.logger.trace("Start WSGIServer")
         self._WSGIServer = WSGIServer(
             ("0.0.0.0", self._flask.config["WEB_PORT"]), self._flask
         )
         self._WSGIServer.start()  # blocking
-        self._flask.logger.debug("WSGIServer stopped")
+        self._flask.logger.trace("WSGIServer stopped")
 
     def _stop_server(self):
-        self._flask.logger.debug("Stop WSGIServer")
+        self._flask.logger.trace("Stop WSGIServer")
         self._WSGIServer.stop()
         self._server_thread.join()
 
@@ -231,7 +234,7 @@ class Framework:
             )
 
     def _signal_handler(self, sig, frame) -> None:
-        self._flask.logger.debug("Signal %s received", signal.strsignal(sig))
+        self._flask.logger.trace("Signal %s received", signal.strsignal(sig))
         self.shutdown()
 
     def _install_signal_handlers(self) -> None:
@@ -242,7 +245,7 @@ class Framework:
         self._flask.config.from_object(config)
         self._flask.config.from_prefixed_env("CFG")
 
-        if self._flask.config["LOG_LEVEL"] == "DEBUG":
+        if self._flask.config["LOG_LEVEL"] in [ "TRACE "]:
             logging.getLogger("werkzeug").setLevel(logging.DEBUG)
         else:
             logging.getLogger("werkzeug").setLevel(logging.ERROR)
@@ -253,14 +256,25 @@ class Framework:
         self._server_thread.start()
 
     def _do_wait(self):
-        self._flask.logger.debug("Start blocking")
+        self._flask.logger.trace("Start blocking")
         while not self._flask.config["EXIT"]:
             try:
                 time.sleep(1)
             except KeyboardInterrupt:
-                self._flask.logger.debug("KeyboardInterrupt received")
+                self._flask.logger.trace("KeyboardInterrupt received")
                 self.shutdown()
                 break
+
+    def _add_trace_level_to_logger(self):
+            TRACE_LOG_LEVEL = 5
+            logging.addLevelName(TRACE_LOG_LEVEL, "TRACE")
+
+            def trace(self, message, *args, **kwargs):
+                if self.isEnabledFor(TRACE_LOG_LEVEL):
+                    self._log(TRACE_LOG_LEVEL, message, args, **kwargs)
+
+            logging.Logger.trace = trace 
+
 
     def start(self, app: App, config: Config, blocked=False) -> int:
         self._load_config(config)
@@ -320,7 +334,7 @@ class Framework:
         self._mqtt.init_app(self._flask)
 
         if self._flask.config["UPDATE_INTERVAL"] > 0:
-            self._flask.logger.debug(
+            self._flask.logger.trace(
                 "Schedule interval job to happen in every %s sec",
                 self._flask.config["UPDATE_INTERVAL"],
             )
@@ -336,7 +350,7 @@ class Framework:
                 + timedelta(seconds=self._flask.config["DELAY_BEFORE_FIRST_TRY"]),
             )
         if self._flask.config["UPDATE_CRON_SCHEDULE"]:
-            self._flask.logger.debug(
+            self._flask.logger.trace(
                 "Schedule cron job: %s", self._flask.config["UPDATE_CRON_SCHEDULE"]
             )
             self._scheduler.add_job(
@@ -373,4 +387,4 @@ class Framework:
                 self._flask.logger.exception("Error occured: %s" % e)
             self._flask.logger.critical("Application stopped")
         else:
-            self._flask.logger.debug("Application already stopped")
+            self._flask.logger.trace("Application already stopped")
