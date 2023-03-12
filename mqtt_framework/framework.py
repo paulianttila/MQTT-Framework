@@ -172,7 +172,7 @@ class Framework:
         self._mqtt_messages_sent_metric.inc()
         fulltopic = self._to_full_mqtt_topic_name(topic)
         self._flask.logger.debug(
-            f"Publish to topic '{fulltopic} retain {retain}: {value}"
+            f"Publish to topic '{fulltopic}' retain {retain}: '{value}'"
         )
         with contextlib.suppress(Exception):
             self._mqtt.publish(fulltopic, value, retain=retain)
