@@ -1,7 +1,9 @@
 def get_metric(result, metric) -> float:
     matched_lines = [line for line in result.split("\n") if line.startswith(metric)]
     for line in matched_lines:
-        return float(line.replace(metric, "").strip())
+        val = float(line.replace(metric, "").strip())
+        print(f"{metric}={val}")
+        return val
 
 
 def check_metrics(response):
