@@ -11,8 +11,8 @@ class Config(object):
     DELAY_BEFORE_FIRST_TRY = 5
     UPDATE_CRON_SCHEDULE = None
     WEB_PORT = 5000
-    WEB_STATIC_DIR = "web/static"
-    WEB_TEMPLATE_DIR = "web/templates"
+    WEB_STATIC_DIR = "/web/static"
+    WEB_TEMPLATE_DIR = "/web/templates"
 
     MQTT_BROKER_URL = "127.0.0.1"
     MQTT_BROKER_PORT = 1883

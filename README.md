@@ -35,8 +35,8 @@ Application can extend variables by the configuration.
 | CFG_MQTT_TLS_KEYFILE       | None            | String pointing to the PEM encoded client private key.                                                         |
 | CFG_MQTT_TLS_INSECURE      | False           | Configure verification of the server hostname in the server certificate.                                       |
 | CFG_MQTT_TOPIC_PREFIX      | <CFG_APP_NAME>/ | MQTT topic prefix.                                                                                             |
-| CFG_WEB_STATIC_DIR         | web/static      | Directory name for static pages.                                                                               |
-| CFG_WEB_TEMPLATE_DIR       | web/templates   | Directory name for templates.                                                                                  |
+| CFG_WEB_STATIC_DIR         | /web/static     | Directory name for static pages.                                                                               |
+| CFG_WEB_TEMPLATE_DIR       | /web/templates  | Directory name for templates.                                                                                  |
 
 ## MQTT topics
 
