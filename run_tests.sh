@@ -33,7 +33,7 @@ run_tests() {
   export PYTHONPATH=${PYTHONPATH}:${PWD}/tests/integration/
 
   # run tests
-  python -m pytest tests/
+  python -m pytest --log-cli-level=INFO tests/
 }
 
 clean_up() {
