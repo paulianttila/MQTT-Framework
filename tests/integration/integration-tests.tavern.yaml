@@ -79,6 +79,7 @@ stages:
       topic: 'myapp/healthy_check_state_response'
       payload: 'False' 
       timeout: 3
+    delay_after: 2 
 
   - name: step9, test healthy check Failure
     request:
