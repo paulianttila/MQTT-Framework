@@ -11,7 +11,7 @@ export CFG_MQTT_BROKER_PORT=1883
 export CFG_WEB_STATIC_DIR=${PWD}/example/web/static
 export CFG_WEB_TEMPLATE_DIR=${PWD}/example/web/templates
 export CFG_WEB_PORT=8080
-export CFG_LOG_LEVEL=DEBUG
+export CFG_LOG_LEVEL=TRACE
 export CFG_UPDATE_INTERVAL=1
 export CFG_DELAY_BEFORE_FIRST_TRY=1
 
