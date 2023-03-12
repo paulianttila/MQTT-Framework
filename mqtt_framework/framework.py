@@ -129,7 +129,7 @@ class Framework:
         def mqtt_message_received(client, userdata, message) -> None:
             self._mqtt_messages_received_metric.inc()
             data = str(message.payload.decode("utf-8"))
-            self._flask.logger.warning(
+            self._flask.logger.debug(
                 "MQTT message received: topic=%s, qos=%s, data: %s",
                 message.topic,
                 str(message.qos),
