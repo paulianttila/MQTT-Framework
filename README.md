@@ -35,7 +35,8 @@ Application can extend variables by the configuration.
 | CFG_MQTT_TLS_KEYFILE       | None            | String pointing to the PEM encoded client private key.                                                         |
 | CFG_MQTT_TLS_INSECURE      | False           | Configure verification of the server hostname in the server certificate.                                       |
 | CFG_MQTT_TOPIC_PREFIX      | <CFG_APP_NAME>/ | MQTT topic prefix.                                                                                             |
-
+| CFG_WEB_STATIC_DIR         | web/static      | Directory name for static pages.                                                                               |
+| CFG_WEB_TEMPLATE_DIR       | web/templates   | Directory name for templates.                                                                                  |
 
 ## MQTT topics
 
@@ -151,7 +152,7 @@ services:
     restart: unless-stopped
     environment:
       - CFG_LOG_LEVEL=DEBUG
-      - CFG_MQTT_BROKER_URL=127.0.0.1
+      - CFG_MQTT_BROKER_URL=<mqtt broker url>
       - CFG_MQTT_BROKER_PORT=1883
       - CFG_TEST_VARIABLE=abcdefg
     healthcheck:
