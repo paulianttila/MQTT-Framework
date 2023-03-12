@@ -11,3 +11,6 @@ def check_metrics(response):
     assert get_metric(response.text, "interval_trigger_counter_total") > 5
     assert get_metric(response.text, "mqtt_messages_sent_total") > 5
     assert get_metric(response.text, "mqtt_messages_received_total") > 4
+
+def check_mqtt_response(response):
+    assert int(response.text) > 5

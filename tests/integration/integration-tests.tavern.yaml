@@ -10,7 +10,7 @@ paho-mqtt: &mqtt_spec
     port: 1883
 
 stages:
-  - name: step1, test basic MQTT messaging
+  - name: test basic MQTT messaging
     mqtt_publish:
       topic: 'myapp/request'
       payload: 'test_message'
@@ -19,7 +19,7 @@ stages:
       payload: 'test_message'
       timeout: 3
 
-  - name: step2, test updateNow triggering
+  - name: test updateNow triggering
     mqtt_publish:
       topic: 'myapp/updateNow'
       payload: 'true'
@@ -28,7 +28,7 @@ stages:
       payload: 'now'
       timeout: 3
 
-  - name: step3, test configuration variable
+  - name: test configuration variable
     mqtt_publish:
       topic: 'myapp/config_variable_request'
       payload: 'true'
@@ -37,7 +37,7 @@ stages:
       payload: '123456'
       timeout: 3
 
-  - name: step4, test updateNow triggering value
+  - name: test updateNow triggering value
     mqtt_publish:
       topic: 'myapp/updateNow'
       payload: 'true'
@@ -46,16 +46,7 @@ stages:
       payload: '2'
       timeout: 3
 
-  - name: step5, test interval triggering value
-    mqtt_publish:
-      topic: 'myapp/dummy'
-      payload: 'true'
-    mqtt_response:
-      topic: 'myapp/interval_trigger_counter'
-      payload: '10' 
-      timeout: 30
-
-  - name: step6, test jobs interface
+  - name: test jobs interface
     request:
       url: http://localhost:8080/jobs
       method: GET
@@ -63,7 +54,7 @@ stages:
     response:
       status_code: 200
 
-  - name: step7, test healthy check OK
+  - name: test healthy check OK
     request:
       url: http://localhost:8080/healthy
       method: GET
@@ -71,7 +62,7 @@ stages:
     response:
       status_code: 200
 
-  - name: step8, set healthy check to be failed
+  - name: set healthy check to be failed
     mqtt_publish:
       topic: 'myapp/healthy_check_state'
       payload: 'False'
@@ -80,7 +71,7 @@ stages:
       payload: 'False' 
       timeout: 3
 
-  - name: step9, test healthy check Failure
+  - name: test healthy check Failure
     request:
       url: http://localhost:8080/healthy
       method: GET
@@ -88,7 +79,7 @@ stages:
     response:
       status_code: 500
 
-  - name: step10, test custom url support
+  - name: test custom url support
     request:
       url: http://localhost:8080/json
       method: GET
@@ -99,7 +90,7 @@ stages:
         id: 1
         message: 'json example data'
 
-  - name: step11, test rest update
+  - name: test rest update
     request:
       url: http://localhost:8080/update
       method: GET
@@ -111,7 +102,7 @@ stages:
       payload: '3'
       timeout: 3
 
-  - name: step12, test metrics
+  - name: test metrics
     request:
       url: http://localhost:8080/metrics
       method: GET
@@ -120,3 +111,13 @@ stages:
       status_code: 200
       verify_response_with:
         function: testing_utils:check_metrics
+
+  - name: test interval triggering value
+    mqtt_publish:
+      topic: 'myapp/dummy'
+      payload: 'true'
+    mqtt_response:
+      topic: 'myapp/interval_trigger_counter'
+      timeout: 3
+      verify_response_with:
+        function: testing_utils:check_mqtt_response
