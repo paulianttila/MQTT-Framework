@@ -6,33 +6,50 @@ Purpose of the library is to simplify the application and minimize the boilerpla
 ## Features
 
 * Relaiable MQTT connection and simple data publish and subscribe functionality
-* Interval scheduler to e.g. update data to MQTT periodically
+* Interval and cron scheduler to e.g. update data to MQTT periodically
 * Environment variable based configuration
 * REST interface (e.g. /healtcheck)
 * Prometheus metrics (/metrics)
+* Easy logging
+* And much more ...
 
 ## Environament variables
 
-| **Variable**               | **Default** | **Descrition**                                                                                                 |
-|----------------------------|-------------|----------------------------------------------------------------------------------------------------------------|
-| CFG_APP_NAME               |             | Name of the app.                                                                                               |
-| CFG_LOG_LEVEL              | INFO        | Logging level: CRITICAL, ERROR, WARNING, INFO or DEBUG                                                         |
-| CFG_UPDATE_CRON_SCHEDULE   |             | Update interval in cron format.                                                                                |
-| CFG_UPDATE_INTERVAL        | 60          | Update interval in seconds. 0 = disabled                                                                       |
-| CFG_DELAY_BEFORE_FIRST_TRY | 5           | Delay before first try in seconds.                                                                             |
-| CFG_MQTT_CLIENT_ID         | <APP_NAME>  | the unique client id string used when connecting to the broker.                                                |
-| CFG_MQTT_BROKER_URL        | 127.0.0.1   | MQTT broker URL that should be used for the connection.                                                        |
-| CFG_MQTT_BROKER_PORT       | 1883        | MQTT broker port that should be used for the connection.                                                       |
-| CFG_MQTT_USERNAME          | None        | MQTT broker username used for authentication. If none is provided authentication is disabled.                  |
-| CFG_MQTT_PASSWORD          | None        | MQTT broker password used for authentication.                                                                  |
-| CFG_MQTT_TLS_CA_CERTS      | None        | A string path to the Certificate Authority certificate files that are to be treated as trusted by this client. |
-| CFG_MQTT_TLS_CERTFILE      | None        | String pointing to the PEM encoded client certificate.                                                         |
-| CFG_MQTT_TLS_KEYFILE       | None        | String pointing to the PEM encoded client private key.                                                         |
-| CFG_MQTT_TLS_INSECURE      | False       | Configure verification of the server hostname in the server certificate.                                       |
-| CFG_MQTT_TOPIC_PREFIX      | <APP_NAME>/ | MQTT topic prefix.                                                                                             |
+Following environament varibles are supported by the framework.
+Application can extend variables by the configuration.
 
+| **Variable**               | **Default**     | **Descrition**                                                                                                 |
+|----------------------------|-----------------|----------------------------------------------------------------------------------------------------------------|
+| CFG_APP_NAME               |                 | Name of the app.                                                                                               |
+| CFG_LOG_LEVEL              | INFO            | Logging level: CRITICAL, ERROR, WARNING, INFO or DEBUG                                                         |
+| CFG_UPDATE_CRON_SCHEDULE   |                 | Update interval in cron format.                                                                                |
+| CFG_UPDATE_INTERVAL        | 60              | Update interval in seconds. 0 = disabled                                                                       |
+| CFG_DELAY_BEFORE_FIRST_TRY | 5               | Delay before first try in seconds.                                                                             |
+| CFG_MQTT_CLIENT_ID         | <CFG_APP_NAME>  | the unique client id string used when connecting to the broker.                                                |
+| CFG_MQTT_BROKER_URL        | 127.0.0.1       | MQTT broker URL that should be used for the connection.                                                        |
+| CFG_MQTT_BROKER_PORT       | 1883            | MQTT broker port that should be used for the connection.                                                       |
+| CFG_MQTT_USERNAME          | None            | MQTT broker username used for authentication. If none is provided authentication is disabled.                  |
+| CFG_MQTT_PASSWORD          | None            | MQTT broker password used for authentication.                                                                  |
+| CFG_MQTT_TLS_CA_CERTS      | None            | A string path to the Certificate Authority certificate files that are to be treated as trusted by this client. |
+| CFG_MQTT_TLS_CERTFILE      | None            | String pointing to the PEM encoded client certificate.                                                         |
+| CFG_MQTT_TLS_KEYFILE       | None            | String pointing to the PEM encoded client private key.                                                         |
+| CFG_MQTT_TLS_INSECURE      | False           | Configure verification of the server hostname in the server certificate.                                       |
+| CFG_MQTT_TOPIC_PREFIX      | <CFG_APP_NAME>/ | MQTT topic prefix.                                                                                             |
+
+
+## MQTT topics
+
+Following MQTT topics are available by default from the framework.
+
+| **Topic**                   | **Descrition**                                                                   |
+|-----------------------------|----------------------------------------------------------------------------------|
+| < app prefix >/updateNow    | Do immidiate update. Call do_update method from the app.                         |
+| < app prefix >/setLogLevel  | Set log level. Supported values: TRACE, DEBUG, INFO, WARNING, ERROR or CRITICAL. |
 
 ## Usage
+
+Simple test application (app.py).
+See more features from integration test app in example folder.
 
 ```python
 from mqtt_framework import Framework
@@ -83,10 +100,63 @@ class MyApp:
     def do_update(self, trigger_source: TriggerSource) -> None:
         self.logger.debug('update called, trigger_source=%s', trigger_source)
         self.logger.debug(f'TEST_VARIABLE from config: {self.config["TEST_VARIABLE"]}')
-        self.counter = self.counter + 1
+        self.counter += 1
         self.publish_value_to_mqtt_topic('counter', self.counter)
 
 if __name__ == '__main__':
-    Framework().start(MyApp(), MyConfig(), blocked=True)
+    Framework().run(MyApp(), MyConfig())
 
 ```
+
+### Example Dockerfile
+
+Dockerfile for test app.
+
+```Dockerfile
+FROM paulianttila/mqtt-framework:1.1.0
+
+ARG DIR=/app
+ARG APP=app.py
+
+ARG USER=app
+ARG GROUP=app
+
+ENV DIR=${DIR}
+ENV APP=${APP}
+
+COPY requirements.txt /tmp/
+RUN pip install --no-cache-dir -r /tmp/requirements.txt && rm /tmp/requirements.txt
+
+RUN mkdir -p ${DIR}
+WORKDIR ${DIR}
+COPY src ${DIR}
+
+RUN addgroup -S ${GROUP} && adduser -S ${USER} -G ${GROUP}
+
+USER ${USER}
+CMD python ${DIR}/${APP}
+```
+
+### Example docker-compose.yaml
+
+Docker-compose file for test app.
+
+```yaml
+version: "3.5"
+
+services:
+  test2mqtt:
+    container_name: test2mqtt
+    image: <repo>/test2mqtt:1.0.0
+    restart: unless-stopped
+    environment:
+      - CFG_LOG_LEVEL=DEBUG
+      - CFG_MQTT_BROKER_URL=127.0.0.1
+      - CFG_MQTT_BROKER_PORT=1883
+      - CFG_TEST_VARIABLE=abcdefg
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/healthy"]
+      interval: 60s
+      timeout: 3s
+      retries: 3
+ ```
