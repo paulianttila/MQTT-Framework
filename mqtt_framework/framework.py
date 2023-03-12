@@ -287,6 +287,9 @@ class Framework:
                 max_instances=1,
             )
 
+    def run(self, app: App, config: Config) -> int:
+        return self.start(app, config, blocked=True)
+
     def start(self, app: App, config: Config, blocked=False) -> int:
         self._load_config(config)
 

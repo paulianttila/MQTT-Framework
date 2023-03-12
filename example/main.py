@@ -7,7 +7,7 @@ from myapp import MyApp
 from myconfig import MyConfig
 
 def start():
-    sys.exit(Framework().start(MyApp(), MyConfig(), blocked=True))
+    sys.exit(Framework().run(MyApp(), MyConfig()))
 
 def start_without_blocking():
     app = Framework()
