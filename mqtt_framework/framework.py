@@ -170,10 +170,12 @@ class Framework:
         self, topic: str, value: str, retain=False
     ) -> None:
         self._mqtt_messages_sent_metric.inc()
+        fulltopic = self._to_full_mqtt_topic_name(topic)
+        self._flask.logger.debug(
+            f"Publish to topic '{fulltopic} retain {retain}: {value}"
+        )
         with contextlib.suppress(Exception):
-            self._mqtt.publish(
-                self._to_full_mqtt_topic_name(topic), value, retain=retain
-            )
+            self._mqtt.publish(fulltopic, value, retain=retain)
 
     def _start_server(self) -> None:
         self._flask.logger.trace("Start WSGIServer")
