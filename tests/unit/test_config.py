@@ -21,8 +21,8 @@ def test_config():
     assert myconfig.UPDATE_INTERVAL == 60
     assert myconfig.DELAY_BEFORE_FIRST_TRY == 5
     assert myconfig.WEB_PORT == 5000
-    assert myconfig.WEB_STATIC_DIR == "web/static"
-    assert myconfig.WEB_TEMPLATE_DIR == "web/templates"
+    assert myconfig.WEB_STATIC_DIR == "/web/static"
+    assert myconfig.WEB_TEMPLATE_DIR == "/web/templates"
 
     assert myconfig.MQTT_BROKER_URL == "127.0.0.1"
     assert myconfig.MQTT_BROKER_PORT == 1883
