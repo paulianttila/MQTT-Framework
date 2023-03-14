@@ -7,3 +7,4 @@ pytest
 tavern
 ruff
 black
+coverage
