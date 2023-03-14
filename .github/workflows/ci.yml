@@ -40,17 +40,16 @@ jobs:
           pip install -r requirements-dev.txt
           pip install -e .
 
-      # Include `--format=github` to enable automatic inline annotations.
       - name: Run Ruff
         run: ruff check --format=github .
 
       - name: Run Black
         run: black --check .
 
-      - name: Run bandit scan
+      - name: Run Bandit scan
         run: bandit -c pyproject.toml -r .
 
-      - name: Install mosquitto
+      - name: Install Mosquitto
         run: |
           sudo apt-get install -y mosquitto
 
@@ -58,3 +57,8 @@ jobs:
         run: |
           chmod +x run_tests.sh
           ./run_tests.sh
+
+      - name: Run code coverage
+        run: |
+          coverage run -m unittest discover
+          coverage report -m

@@ -34,10 +34,6 @@ run_tests() {
 
   # run tests
   python -m pytest --log-cli-level=INFO tests/
-
-  # show code coverage report
-  coverage run -m unittest discover
-  coverage report -m
 }
 
 clean_up() {
