@@ -11,6 +11,8 @@ attrs==21.4.0
     #   jsonschema
     #   pytest
     #   tavern
+black==23.1.0
+    # via -r requirements-dev.in
 build==0.9.0
     # via pip-tools
 certifi==2022.12.7
@@ -22,6 +24,7 @@ cheroot==9.0.0
 click==8.1.3
     # via
     #   -r requirements.txt
+    #   black
     #   flask
     #   pip-tools
 commonmark==0.9.1
@@ -78,6 +81,8 @@ more-itertools==9.0.0
     #   -r requirements.txt
     #   cheroot
     #   jaraco-functools
+mypy-extensions==1.0.0
+    # via black
 ordered-set==4.1.0
     # via
     #   -r requirements.txt
@@ -85,6 +90,7 @@ ordered-set==4.1.0
 packaging==22.0
     # via
     #   -r requirements.txt
+    #   black
     #   build
     #   limits
     #   pytest
@@ -93,12 +99,16 @@ paho-mqtt==1.5.1
     #   -r requirements.txt
     #   flask-mqtt
     #   tavern
+pathspec==0.11.0
+    # via black
 pbr==5.11.0
     # via stevedore
 pep517==0.13.0
     # via build
 pip-tools==6.12.1
     # via -r requirements-dev.in
+platformdirs==3.1.1
+    # via black
 pluggy==1.0.0
     # via pytest
 prometheus-client==0.15.0

@@ -6,3 +6,4 @@ pip-tools
 pytest
 tavern
 ruff
+black
