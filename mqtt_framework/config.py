@@ -4,7 +4,6 @@ import ssl
 
 
 class Config(object):
-
     EXIT = False
     LOG_LEVEL = "INFO"
     UPDATE_INTERVAL = 60
