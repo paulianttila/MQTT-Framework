@@ -11,6 +11,8 @@ attrs==21.4.0
     #   jsonschema
     #   pytest
     #   tavern
+bandit[toml]==1.7.5
+    # via -r requirements-dev.in
 black==23.1.0
     # via -r requirements-dev.in
 build==0.9.0
@@ -49,6 +51,10 @@ flask-limiter==3.1.0
     # via -r requirements.txt
 flask-mqtt @ git+https://github.com/stlehmann/Flask-MQTT.git@master
     # via -r requirements.txt
+gitdb==4.0.10
+    # via gitpython
+gitpython==3.1.31
+    # via bandit
 idna==3.4
     # via requests
 iniconfig==1.1.1
@@ -146,12 +152,15 @@ pytz-deprecation-shim==0.1.0.post0
     #   -r requirements.txt
     #   tzlocal
 pyyaml==6.0
-    # via tavern
+    # via
+    #   bandit
+    #   tavern
 requests==2.28.1
     # via tavern
 rich==12.6.0
     # via
     #   -r requirements.txt
+    #   bandit
     #   flask-limiter
 ruamel-yaml==0.17.21
     # via pykwalify
@@ -164,8 +173,12 @@ six==1.16.0
     #   cheroot
     #   jsonschema
     #   python-dateutil
+smmap==5.0.0
+    # via gitdb
 stevedore==3.3.3
-    # via tavern
+    # via
+    #   bandit
+    #   tavern
 tavern==1.25.2
     # via -r requirements-dev.in
 typing-extensions==4.4.0

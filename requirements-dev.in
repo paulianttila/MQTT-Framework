@@ -8,3 +8,4 @@ tavern
 ruff
 black
 coverage
+bandit[toml]

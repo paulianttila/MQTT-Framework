@@ -47,6 +47,9 @@ jobs:
       - name: Run Black
         run: black --check .
 
+      - name: Run bandit scan
+        run: bandit -c pyproject.toml -r .
+
       - name: Install mosquitto
         run: |
           sudo apt-get install -y mosquitto
