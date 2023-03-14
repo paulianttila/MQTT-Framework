@@ -1,11 +1,11 @@
 from mqtt_framework import Config
 
-class MyConfig(Config):
 
+class MyConfig(Config):
     def __init__(self):
         super().__init__(self.APP_NAME)
 
-    APP_NAME = 'myapp'
+    APP_NAME = "myapp"
 
     # App specific variables
 

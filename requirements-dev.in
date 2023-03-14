@@ -6,3 +6,6 @@ pip-tools
 pytest
 tavern
 ruff
+black
+coverage
+bandit[toml]

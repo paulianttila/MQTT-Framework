@@ -4,7 +4,6 @@ import ssl
 
 
 class Config(object):
-
     EXIT = False
     LOG_LEVEL = "INFO"
     UPDATE_INTERVAL = 60
@@ -16,8 +15,8 @@ class Config(object):
 
     MQTT_BROKER_URL = "127.0.0.1"
     MQTT_BROKER_PORT = 1883
-    MQTT_USERNAME = ""
-    MQTT_PASSWORD = ""
+    MQTT_USERNAME = None
+    MQTT_PASSWORD = None
     MQTT_KEEPALIVE = 30
     MQTT_TLS_ENABLED = False
     MQTT_TLS_CA_CERTS = None
