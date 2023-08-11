@@ -57,7 +57,7 @@ flask-mqtt @ git+https://github.com/stlehmann/Flask-MQTT.git@master
     # via -r requirements.txt
 gitdb==4.0.10
     # via gitpython
-gitpython==3.1.31
+gitpython==3.1.32
     # via bandit
 idna==3.4
     # via requests
