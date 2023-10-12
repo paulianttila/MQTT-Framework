@@ -45,7 +45,7 @@ deprecated==1.2.13
     #   limits
 docopt==0.6.2
     # via pykwalify
-flask==2.3.2
+flask==2.3.3
     # via
     #   -r requirements.txt
     #   flask-limiter
