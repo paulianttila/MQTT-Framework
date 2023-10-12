@@ -7,6 +7,7 @@ import threading
 import logging
 from datetime import datetime, timedelta
 import time
+from threading import Lock
 
 from flask import Flask as Flask
 from flask import jsonify
@@ -25,8 +26,7 @@ from mqtt_framework.app import App as App, TriggerSource
 from mqtt_framework.config import Config as Config
 
 # current MQTT-Framework version
-__version__ = "1.1.1"
-
+__version__ = "1.2.0"
 
 class ReadOnlyDict(dict):
     def __readonly__(self, *args, **kwargs):
@@ -75,7 +75,9 @@ class Framework:
             "How many exceptions caused by do_update",
             registry=self._metrics_registry,
         )
+        self._started = False
         self._closed = False
+        self.lock = Lock()
         self._limiter = Limiter(
             get_remote_address,
             app=self._flask,
@@ -293,6 +295,14 @@ class Framework:
         return self.start(app, config, blocked=True)
 
     def start(self, app: App, config: Config, blocked=False) -> int:
+        with self.lock:
+            self._start(app, config, blocked)
+
+    def _start(self, app: App, config: Config, blocked=False) -> int:
+        if self._started:
+            self._flask.logger.debug("Application already started")
+            return 1
+
         self._load_config(config)
 
         if blocked:
@@ -352,6 +362,8 @@ class Framework:
             + timedelta(seconds=self._flask.config["DELAY_BEFORE_FIRST_TRY"])
         )
         self._scheduler.start()
+        self._started = True
+        self._closed = False
         if blocked:
             self._do_wait()
         return 0
@@ -363,16 +375,18 @@ class Framework:
         self._mqtt.unsubscribe_all()
         self._publish_value_to_mqtt_topic("status", "offline", True)
         self._mqtt._disconnect()
+        self._closed = True
+        self._started = False
 
     def shutdown(self) -> None:
-        if not self._closed:
-            self._closed = True
-            self._flask.config["EXIT"] = True
-            self._flask.logger.info("Closing...")
-            try:
-                self._shutdown()
-            except Exception as e:
-                self._flask.logger.exception(f"Error occured: {e}")
-            self._flask.logger.critical("Application stopped")
-        else:
-            self._flask.logger.trace("Application already stopped")
+        with self.lock:
+            if not self._closed:
+                self._flask.config["EXIT"] = True
+                self._flask.logger.info("Closing...")
+                try:
+                    self._shutdown()
+                except Exception as e:
+                    self._flask.logger.exception(f"Error occured: {e}")
+                self._flask.logger.critical("Application stopped")
+            else:
+                self._flask.logger.debug("Application already stopped")
