@@ -110,7 +110,7 @@ paho-mqtt==1.5.1
     #   -r requirements.txt
     #   flask-mqtt
     #   tavern
-pathspec==0.11.0
+pathspec==0.11.2
     # via black
 pbr==5.11.0
     # via stevedore
