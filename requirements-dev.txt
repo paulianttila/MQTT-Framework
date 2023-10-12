@@ -49,7 +49,7 @@ flask==3.0.0
     #   prometheus-flask-exporter
 flask-limiter==3.5.0
     # via -r requirements.txt
-flask-mqtt @ git+https://github.com/stlehmann/Flask-MQTT.git@1.1.2
+flask-mqtt @ git+https://github.com/stlehmann/Flask-MQTT.git@v1.2.0
     # via -r requirements.txt
 gitdb==4.0.10
     # via gitpython
