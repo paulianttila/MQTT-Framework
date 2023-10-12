@@ -28,6 +28,7 @@ from mqtt_framework.config import Config as Config
 # current MQTT-Framework version
 __version__ = "1.2.0"
 
+
 class ReadOnlyDict(dict):
     def __readonly__(self, *args, **kwargs):
         raise RuntimeError("Read only configuration")
