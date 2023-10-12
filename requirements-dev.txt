@@ -183,7 +183,7 @@ stevedore==3.3.3
     # via
     #   bandit
     #   tavern
-tavern==1.25.2
+tavern==2.3.0
     # via -r requirements-dev.in
 typing-extensions==4.4.0
     # via
