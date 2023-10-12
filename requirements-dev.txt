@@ -112,7 +112,7 @@ paho-mqtt==1.5.1
     #   tavern
 pathspec==0.11.0
     # via black
-pbr==5.11.0
+pbr==5.11.1
     # via stevedore
 pep517==0.13.0
     # via build
