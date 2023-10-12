@@ -10,7 +10,6 @@ attrs==21.4.0
     # via
     #   jsonschema
     #   pytest
-    #   tavern
 bandit[toml]==1.7.5
     # via -r requirements-dev.in
 black==23.1.0
@@ -75,7 +74,7 @@ jinja2==3.1.2
     # via
     #   -r requirements.txt
     #   flask
-jmespath==0.10.0
+jmespath==1.0.1
     # via tavern
 jsonschema==3.2.0
     # via tavern
@@ -143,7 +142,7 @@ pytest==7.2.0
     # via
     #   -r requirements-dev.in
     #   tavern
-python-box==5.4.1
+python-box==6.1.0
     # via tavern
 python-dateutil==2.8.2
     # via pykwalify
@@ -155,7 +154,7 @@ pytz-deprecation-shim==0.1.0.post0
     # via
     #   -r requirements.txt
     #   tzlocal
-pyyaml==6.0
+pyyaml==6.0.1
     # via
     #   bandit
     #   tavern
@@ -179,11 +178,11 @@ six==1.16.0
     #   python-dateutil
 smmap==5.0.0
     # via gitdb
-stevedore==3.3.3
+stevedore==4.1.1
     # via
     #   bandit
     #   tavern
-tavern==1.25.2
+tavern==2.3.0
     # via -r requirements-dev.in
 typing-extensions==4.4.0
     # via
