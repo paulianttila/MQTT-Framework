@@ -6,7 +6,7 @@ variables:
   mqtt:
     host: 'localhost'
     port: 1884
-    username: 'testuser'
-    password: 'testpassword'
+    username: 'tavern'
+    password: 'tavern123'
   rest:
     url: localhost:8080

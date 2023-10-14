@@ -1,2 +1,5 @@
-user testuser
+user myapp
+topic readwrite myapp/#
+
+user tavern
 topic readwrite myapp/#
