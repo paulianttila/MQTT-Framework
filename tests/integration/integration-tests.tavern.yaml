@@ -18,9 +18,9 @@ paho-mqtt: &mqtt_spec
     password: '{mqtt.password}'
   tls:
     enable: false
-    ca_certs: ''
-    certfile: ''
-    keyfile: ''
+    ca_certs: '{mqtt.ca_certs}'
+    certfile: '{mqtt.certfile}'
+    keyfile: '{mqtt.keyfile}'
 
 stages:
   - name: test basic MQTT messaging
