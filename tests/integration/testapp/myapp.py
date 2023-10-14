@@ -17,9 +17,13 @@ class MyApp:
         self.exit = False
         self.healthy_check_state = True
         self.interval_trigger_counter = 0
+        self.cron_trigger_counter = 0
         self.manual_trigger_counter = 0
         self.interval_trigger_counter_metric = Counter(
             "interval_trigger_counter", "", registry=self.metrics_registry
+        )
+        self.cron_trigger_counter_metric = Counter(
+            "cron_trigger_counter", "", registry=self.metrics_registry
         )
         self.manual_trigger_counter_metric = Counter(
             "manual_trigger_counter", "", registry=self.metrics_registry
@@ -65,7 +69,7 @@ class MyApp:
         if trigger_source == TriggerSource.MANUAL:
             self.manual_trigger_counter_metric.inc()
             self.manual_trigger_counter = self.manual_trigger_counter + 1
-            self.publish_value_to_mqtt_topic("manual_trigger_counter_updated", "now")
+            self.publish_value_to_mqtt_topic("manual_trigger_counter_updated", "manual")
             self.publish_value_to_mqtt_topic(
                 "manual_trigger_counter", self.manual_trigger_counter
             )
@@ -73,9 +77,19 @@ class MyApp:
         elif trigger_source == TriggerSource.INTERVAL:
             self.interval_trigger_counter_metric.inc()
             self.interval_trigger_counter = self.interval_trigger_counter + 1
-            self.publish_value_to_mqtt_topic("interval_trigger_counter_updated", "now")
+            self.publish_value_to_mqtt_topic(
+                "interval_trigger_counter_updated", "interval"
+            )
             self.publish_value_to_mqtt_topic(
                 "interval_trigger_counter", self.interval_trigger_counter
+            )
+
+        elif trigger_source == TriggerSource.CRON:
+            self.cron_trigger_counter_metric.inc()
+            self.cron_trigger_counter = self.cron_trigger_counter + 1
+            self.publish_value_to_mqtt_topic("cron_trigger_counter_updated", "cron")
+            self.publish_value_to_mqtt_topic(
+                "cron_trigger_counter", self.cron_trigger_counter
             )
 
     def result_html_page(self):
