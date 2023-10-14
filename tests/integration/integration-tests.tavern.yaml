@@ -149,12 +149,12 @@ paho-mqtt: &mqtt_spec_basic_auth
     transport: tcp
     client_id: tavern-tester-basic-auth
   connect:
-    host: '{mqtt.host}'
-    port: !int '{mqtt.port:d}'
+    host: '{mqtt-auth.host}'
+    port: !int '{mqtt-auth.port:d}'
     timeout: 3
   auth:
-    username: '{mqtt.username}'
-    password: '{mqtt.password}'
+    username: '{mqtt-auth.username}'
+    password: '{mqtt-auth.password}'
 
 stages:
   - name: test basic MQTT messaging

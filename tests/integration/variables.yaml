@@ -5,11 +5,16 @@ description: Common variables for all tests
 variables:
   mqtt:
     host: 'localhost'
-    port: 1883
+    port: 1884
+  mqtt-auth:
+    host: 'localhost'
+    port: 1885
     username: 'test-user'
     password: 'test-password'
   mqtts:
     host: 'localhost'
-    port: 1883
+    port: 1886
+    username: 'test-user'
+    password: 'test-password'
   rest:
     url: localhost:8080
