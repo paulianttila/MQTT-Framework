@@ -69,9 +69,7 @@ class MyApp:
         if trigger_source == TriggerSource.MANUAL:
             self.manual_trigger_counter_metric.inc()
             self.manual_trigger_counter = self.manual_trigger_counter + 1
-            self.publish_value_to_mqtt_topic(
-                "manual_trigger_counter_updated", "manual"
-            )
+            self.publish_value_to_mqtt_topic("manual_trigger_counter_updated", "manual")
             self.publish_value_to_mqtt_topic(
                 "manual_trigger_counter", self.manual_trigger_counter
             )
