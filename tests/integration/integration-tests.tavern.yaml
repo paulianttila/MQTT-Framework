@@ -17,7 +17,7 @@ paho-mqtt: &mqtt_spec
     username: '{mqtt.username}'
     password: '{mqtt.password}'
   tls:
-    enable: false
+    enable: true
     ca_certs: '{mqtt.ca_certs}'
     certfile: '{mqtt.certfile}'
     keyfile: '{mqtt.keyfile}'
