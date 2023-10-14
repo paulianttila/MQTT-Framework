@@ -10,6 +10,7 @@ export CFG_MQTT_BROKER_URL=localhost
 export CFG_MQTT_BROKER_PORT=1884
 export CFG_MQTT_USERNAME=myapp
 export CFG_MQTT_PASSWORD=myapp123
+export CFG_MQTT_TLS_ENABLED=True
 export CFG_MQTT_TLS_CA_CERTS=${PWD}/tests/integration/mosquitto/ca.crt
 export CFG_MQTT_TLS_CERTFILE=${PWD}/tests/integration/mosquitto/client.crt
 export CFG_MQTT_TLS_KEYFILE=${PWD}/tests/integration/mosquitto/client.key
