@@ -30,6 +30,7 @@ Application can extend variables by the configuration.
 | CFG_MQTT_BROKER_PORT       | 1883            | MQTT broker port that should be used for the connection.                                                       |
 | CFG_MQTT_USERNAME          | None            | MQTT broker username used for authentication. If none is provided authentication is disabled.                  |
 | CFG_MQTT_PASSWORD          | None            | MQTT broker password used for authentication.                                                                  |
+| CFG_MQTT_TLS_ENABLED       | False           | Enable TLS.                                                                                                    |
 | CFG_MQTT_TLS_CA_CERTS      | None            | A string path to the Certificate Authority certificate files that are to be treated as trusted by this client. |
 | CFG_MQTT_TLS_CERTFILE      | None            | String pointing to the PEM encoded client certificate.                                                         |
 | CFG_MQTT_TLS_KEYFILE       | None            | String pointing to the PEM encoded client private key.                                                         |
