@@ -7,7 +7,7 @@ PWD=$(pwd)
 
 # set configuration for test app
 export CFG_MQTT_BROKER_URL=localhost
-export CFG_MQTT_BROKER_PORT=1883
+export CFG_MQTT_BROKER_PORT=1884
 export CFG_WEB_STATIC_DIR=${PWD}/example/web/static
 export CFG_WEB_TEMPLATE_DIR=${PWD}/example/web/templates
 export CFG_WEB_PORT=8080

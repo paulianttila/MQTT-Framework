@@ -8,11 +8,19 @@ includes:
 paho-mqtt: &mqtt_spec
   client:
     transport: tcp
-    client_id: tavern-tester
+    client_id: '{mqtt.username}'
   connect:
     host: '{mqtt.host}'
     port: !int '{mqtt.port:d}'
     timeout: 3
+  auth:
+    username: '{mqtt.username}'
+    password: '{mqtt.password}'
+  tls:
+    enable: false
+    ca_certs: ''
+    certfile: ''
+    keyfile: ''
 
 stages:
   - name: test basic MQTT messaging
@@ -136,63 +144,3 @@ stages:
       status_code: 200
       verify_response_with:
         function: testing_utils:check_metrics
-
----
-
-test_name: Make sure basic authetication to MQTT broker works
-
-includes:
-  - !include variables.yaml
-
-paho-mqtt: &mqtt_spec_basic_auth
-  client:
-    transport: tcp
-    client_id: tavern-tester-basic-auth
-  connect:
-    host: '{mqtt-auth.host}'
-    port: !int '{mqtt-auth.port:d}'
-    timeout: 3
-  auth:
-    username: '{mqtt-auth.username}'
-    password: '{mqtt-auth.password}'
-
-stages:
-  - name: test basic MQTT messaging
-    mqtt_publish:
-      topic: 'myapp/request'
-      payload: 'test_message2'
-    mqtt_response:
-      topic: 'myapp/response'
-      payload: 'test_message2'
-      timeout: 3
-
----
-
-test_name: Make sure TLS to MQTT broker works
-
-includes:
-  - !include variables.yaml
-
-paho-mqtt: &mqtt_spec_tls
-  client:
-    transport: tcp
-    client_id: tavern-tester-tls
-  connect:
-    host: '{mqtts.host}'
-    port: !int '{mqtts.port:d}'
-    timeout: 3
-  tls:
-    enable: false # TODO
-    ca_certs: ''
-    certfile: ''
-    keyfile: ''
-
-stages:
-  - name: test basic MQTT messaging
-    mqtt_publish:
-      topic: 'myapp/request'
-      payload: 'test_message3'
-    mqtt_response:
-      topic: 'myapp/response'
-      payload: 'test_message3'
-      timeout: 3
