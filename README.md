@@ -50,7 +50,7 @@ Following MQTT topics are available by default from the framework.
 ## Usage
 
 Simple test application (app.py).
-See more features from integration test app in example folder.
+See more features from integration test app in tests/integration/testapp folder.
 
 ```python
 from mqtt_framework import Framework

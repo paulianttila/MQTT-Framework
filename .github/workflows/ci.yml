@@ -55,8 +55,8 @@ jobs:
 
       - name: Run unit and integration tests
         run: |
-          chmod +x run_tests.sh
-          ./run_tests.sh
+          bash tests/integration/mosquitto/run_mosquitto.sh
+          bash run_tests.sh
 
       - name: Run code coverage
         run: |

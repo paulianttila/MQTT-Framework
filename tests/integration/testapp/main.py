@@ -6,7 +6,6 @@ from mqtt_framework import Framework
 from myapp import MyApp
 from myconfig import MyConfig
 
-
 def start():
     sys.exit(Framework().run(MyApp(), MyConfig()))
 
