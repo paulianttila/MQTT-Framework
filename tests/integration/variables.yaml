@@ -1,0 +1,15 @@
+---
+name: common variables
+description: Common variables for all tests
+
+variables:
+  mqtt:
+    host: 'localhost'
+    port: 1883
+    username: 'test-user'
+    password: 'test-password'
+  mqtts:
+    host: 'localhost'
+    port: 1883
+  rest:
+    url: localhost:8080

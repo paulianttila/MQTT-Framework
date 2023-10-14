@@ -13,6 +13,7 @@ export CFG_WEB_TEMPLATE_DIR=${PWD}/example/web/templates
 export CFG_WEB_PORT=8080
 export CFG_LOG_LEVEL=TRACE
 export CFG_UPDATE_INTERVAL=1
+export CFG_UPDATE_CRON_SCHEDULE="* * * * * *"
 export CFG_DELAY_BEFORE_FIRST_TRY=1
 
 TEST_APP_PID=
