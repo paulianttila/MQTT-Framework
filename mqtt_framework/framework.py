@@ -250,6 +250,7 @@ class Framework:
                 self._flask.logger.trace("KeyboardInterrupt received")
                 self.shutdown()
                 break
+        self._flask.logger.trace("End blocking")
 
     def _add_trace_level_to_logger(self) -> None:
         TRACE_LOG_LEVEL = 5
@@ -284,20 +285,35 @@ class Framework:
             self._scheduler.add_job(
                 self._call_do_update,
                 name="CRON_SCHEDULE",
-                trigger=CronTrigger.from_crontab(
-                    self._flask.config["UPDATE_CRON_SCHEDULE"]
-                ),
+                trigger=self.create_cron_trigger(),
                 args=[TriggerSource.CRON],
                 id="do_update_cron",
                 max_instances=1,
             )
+
+    def create_cron_trigger(self) -> CronTrigger:
+        values = self._flask.config["UPDATE_CRON_SCHEDULE"].split()
+        if len(values) == 6:
+            return CronTrigger(
+                second=values[0],
+                minute=values[1],
+                hour=values[2],
+                day=values[3],
+                month=values[4],
+                day_of_week=values[5],
+            )
+        else:
+            return CronTrigger.from_crontab(self._flask.config["UPDATE_CRON_SCHEDULE"])
 
     def run(self, app: App, config: Config) -> int:
         return self.start(app, config, blocked=True)
 
     def start(self, app: App, config: Config, blocked=False) -> int:
         with self.lock:
-            self._start(app, config, blocked)
+            if retval := self._start(app, config, blocked):
+                return retval
+        if blocked:
+            self._do_wait()
 
     def _start(self, app: App, config: Config, blocked=False) -> int:
         if self._started:
@@ -365,8 +381,6 @@ class Framework:
         self._scheduler.start()
         self._started = True
         self._closed = False
-        if blocked:
-            self._do_wait()
         return 0
 
     def _shutdown(self) -> None:

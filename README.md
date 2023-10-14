@@ -21,8 +21,8 @@ Application can extend variables by the configuration.
 | **Variable**               | **Default**     | **Descrition**                                                                                                 |
 |----------------------------|-----------------|----------------------------------------------------------------------------------------------------------------|
 | CFG_APP_NAME               |                 | Name of the app.                                                                                               |
-| CFG_LOG_LEVEL              | INFO            | Logging level: CRITICAL, ERROR, WARNING, INFO or DEBUG                                                         |
-| CFG_UPDATE_CRON_SCHEDULE   |                 | Update interval in cron format.                                                                                |
+| CFG_LOG_LEVEL              | INFO            | Logging level: CRITICAL, ERROR, WARNING, INFO or DEBUG.                                                        |
+| CFG_UPDATE_CRON_SCHEDULE   |                 | Update interval in cron format. Both Unix (5 elements) and Spring (6 elements) formats are supported.          |
 | CFG_UPDATE_INTERVAL        | 60              | Update interval in seconds. 0 = disabled                                                                       |
 | CFG_DELAY_BEFORE_FIRST_TRY | 5               | Delay before first try in seconds.                                                                             |
 | CFG_MQTT_CLIENT_ID         | <CFG_APP_NAME>  | the unique client id string used when connecting to the broker.                                                |
