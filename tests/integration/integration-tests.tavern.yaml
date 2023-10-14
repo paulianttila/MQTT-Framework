@@ -125,6 +125,7 @@ stages:
       topic: 'myapp/manual_trigger_counter'
       payload: '3'
       timeout: 3
+    delay_after: 5 
 
   - name: test metrics
     request:
