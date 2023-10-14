@@ -1,4 +1,3 @@
 #!/usr/bin/env bash
-mosquitto_passwd -c tests/integration/mosquitto/mosquitto.passwd test-user test-password
-cat tests/integration/mosquitto/mosquitto.passwd
+mosquitto_passwd -b tests/integration/mosquitto/mosquitto.passwd testuser testpassword
 mosquitto -c tests/integration/mosquitto/mosquitto.conf -d

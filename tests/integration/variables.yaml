@@ -9,12 +9,12 @@ variables:
   mqtt-auth:
     host: 'localhost'
     port: 1885
-    username: 'test-user'
-    password: 'test-password'
+    username: 'testuser'
+    password: 'testpassword'
   mqtts:
     host: 'localhost'
     port: 1886
-    username: 'test-user'
-    password: 'test-password'
+    username: 'testuser'
+    password: 'testpassword'
   rest:
     url: localhost:8080
