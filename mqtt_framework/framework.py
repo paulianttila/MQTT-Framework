@@ -77,7 +77,6 @@ class Framework:
             registry=self._metrics_registry,
         )
         self._started = False
-        self._closed = False
         self.lock = Lock()
         self._limiter = Limiter(
             get_remote_address,
@@ -380,7 +379,6 @@ class Framework:
         )
         self._scheduler.start()
         self._started = True
-        self._closed = False
         return 0
 
     def _shutdown(self) -> None:
@@ -390,12 +388,11 @@ class Framework:
         self._mqtt.unsubscribe_all()
         self._publish_value_to_mqtt_topic("status", "offline", True)
         self._mqtt._disconnect()
-        self._closed = True
         self._started = False
 
     def shutdown(self) -> None:
         with self.lock:
-            if not self._closed:
+            if self._started:
                 self._flask.config["EXIT"] = True
                 self._flask.logger.info("Closing...")
                 try:
