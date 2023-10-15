@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. .env
+. env
 
 DIR_CA="ca"
 DIR_SERVER="server"
