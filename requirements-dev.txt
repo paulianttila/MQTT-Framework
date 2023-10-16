@@ -182,7 +182,7 @@ ruamel-yaml==0.17.35
     # via pykwalify
 ruamel-yaml-clib==0.2.8
     # via ruamel-yaml
-ruff==0.0.292
+ruff==0.1.0
     # via -r requirements-dev.in
 six==1.16.0
     # via
