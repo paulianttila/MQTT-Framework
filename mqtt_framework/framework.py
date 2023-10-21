@@ -36,6 +36,8 @@ class Framework:
     ###########################################################
 
     def __init__(self):
+        self.__add_trace_level_to_logger()
+        self.__init_flask()
         self._mqtt = Mqtt()
         self._lock = Lock()
         self._scheduler = BackgroundScheduler(timezone=str(tzlocal.get_localzone()))
@@ -46,8 +48,6 @@ class Framework:
             storage_uri="memory://",
             strategy="fixed-window",
         )
-        self.__add_trace_level_to_logger()
-        self.__init_flask()
         self.__init_metrics()
         self.__init_flask_routes()
         self.__init_mqtt_handlers()
