@@ -51,7 +51,7 @@ flask-limiter==3.5.0
     # via -r requirements.txt
 flask-mqtt @ git+https://github.com/stlehmann/Flask-MQTT.git@1.1.2
     # via -r requirements.txt
-gitdb==4.0.10
+gitdb==4.0.11
     # via gitpython
 gitpython==3.1.38
     # via bandit
