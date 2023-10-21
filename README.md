@@ -1,5 +1,10 @@
 # MQTT-Framework
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Latest release](https://img.shields.io/github/v/release/paulianttila/MQTT-Framework.svg)](https://github.com/paulianttila/MQTT-Framework/releases)
+[![CI](https://github.com/paulianttila/MQTT-Framework/workflows/CI/badge.svg)](https://github.com/paulianttila/MQTT-Framework/actions?query=workflow%3ACI)
+
+
 Simple application framework for docker container based MQTT applications.
 Purpose of the library is to simplify the application and minimize the boilerplate code.
 
@@ -45,8 +50,22 @@ Following MQTT topics are available by default from the framework.
 
 | **Topic**                   | **Descrition**                                                                   |
 |-----------------------------|----------------------------------------------------------------------------------|
-| < app prefix >/updateNow    | Do immidiate update. Call do_update method from the app.                         |
-| < app prefix >/setLogLevel  | Set log level. Supported values: TRACE, DEBUG, INFO, WARNING, ERROR or CRITICAL. |
+| <app prefix>/updateNow      | Do immidiate update. Call do_update method from the app.                         |
+| <app prefix>/setLogLevel    | Set log level. Supported values: TRACE, DEBUG, INFO, WARNING, ERROR or CRITICAL. |
+
+## REST interface
+
+Following default API is provided by the framework.
+
+| **Path**                | Method | **Descrition**                            |
+|-------------------------|--------|-------------------------------------------|
+| <host:port>/healthy     | GET    | Do healthy check.                         |
+| <host:port>/update      | GET    | Call app do_update function immidiately.  |
+| <host:port>/jobs        | GET    | Return job sceduling in json format.      |
+
+## Prometheus metrics
+
+Prometheus metrics are available in `<host:port>/metrics`.
 
 ## Usage
 
