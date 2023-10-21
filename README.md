@@ -1,5 +1,10 @@
 # MQTT-Framework
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Latest release](https://img.shields.io/github/v/release/paulianttila/MQTT-Framework.svg)](https://github.com/paulianttila/MQTT-Framework/releases)
+[![CI](https://github.com/paulianttila/MQTT-Framework/workflows/CI/badge.svg)](https://github.com/paulianttila/MQTT-Framework/actions?query=workflow%3ACI)
+
+
 Simple application framework for docker container based MQTT applications.
 Purpose of the library is to simplify the application and minimize the boilerplate code.
 
