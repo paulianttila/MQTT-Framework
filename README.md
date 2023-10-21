@@ -45,8 +45,22 @@ Following MQTT topics are available by default from the framework.
 
 | **Topic**                   | **Descrition**                                                                   |
 |-----------------------------|----------------------------------------------------------------------------------|
-| < app prefix >/updateNow    | Do immidiate update. Call do_update method from the app.                         |
-| < app prefix >/setLogLevel  | Set log level. Supported values: TRACE, DEBUG, INFO, WARNING, ERROR or CRITICAL. |
+| <app prefix>/updateNow      | Do immidiate update. Call do_update method from the app.                         |
+| <app prefix>/setLogLevel    | Set log level. Supported values: TRACE, DEBUG, INFO, WARNING, ERROR or CRITICAL. |
+
+## REST interface
+
+Following default API is provided by the framework.
+
+| **Path**                | Method | **Descrition**                            |
+|-------------------------|--------|-------------------------------------------|
+| <host:port>/healthy     | GET    | Do healthy check.                         |
+| <host:port>/update      | GET    | Call app do_update function immidiately.  |
+| <host:port>/jobs        | GET    | Return job sceduling in json format.      |
+
+## Prometheus metrics
+
+Prometheus metrics are available in `<host:port>/metrics`.
 
 ## Usage
 
