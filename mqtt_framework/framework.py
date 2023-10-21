@@ -111,7 +111,7 @@ class Framework:
 
     def __init_metrics(self) -> None:
         self._metrics_registry = CollectorRegistry()
-        self._metrics = PrometheusMetrics(registry=self._metrics_registry)
+        self._metrics = PrometheusMetrics(app=None, registry=self._metrics_registry)
         self._mqtt_messages_received_metric = Counter(
             "mqtt_messages_received", "", registry=self._metrics_registry
         )
