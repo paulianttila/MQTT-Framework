@@ -5,8 +5,10 @@ import os
 import signal
 import threading
 import logging
-from datetime import datetime, timedelta
 import time
+import tzlocal
+
+from datetime import datetime, timedelta
 from threading import Lock
 
 from flask import Flask as Flask
@@ -14,13 +16,13 @@ from flask import jsonify
 from cheroot.wsgi import Server as WSGIServer
 
 from flask_mqtt import Mqtt
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from prometheus_flask_exporter import PrometheusMetrics
 from prometheus_client import CollectorRegistry, Counter, Summary
-import tzlocal
+
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 from mqtt_framework.app import App as App, TriggerSource
 from mqtt_framework.config import Config as Config
@@ -36,21 +38,19 @@ class Framework:
     ###########################################################
 
     def __init__(self):
-        self.__add_trace_level_to_logger()
-        self.__init_flask()
-        self._mqtt = Mqtt()
-        self._lock = Lock()
-        self._scheduler = BackgroundScheduler(timezone=str(tzlocal.get_localzone()))
         self._limiter = Limiter(
             get_remote_address,
-            app=self._flask,
             default_limits=["1 per second"],
             storage_uri="memory://",
             strategy="fixed-window",
         )
-        self.__init_metrics()
+        self._scheduler = BackgroundScheduler(timezone=str(tzlocal.get_localzone()))
+        self._lock = Lock()
+        self.__add_trace_level_to_logger()
+        self.__init_flask()
         self.__init_flask_routes()
-        self.__init_mqtt_handlers()
+        self.__init_metrics()
+        self.__init_mqtt()
         self._started = False
 
     def __add_trace_level_to_logger(self) -> None:
@@ -94,7 +94,9 @@ class Framework:
         def printjobs():
             return self._rest_get_jobs()
 
-    def __init_mqtt_handlers(self) -> None:
+    def __init_mqtt(self) -> None:
+        self._mqtt = Mqtt()
+
         @self._mqtt.on_connect()
         def handle_connect(client, userdata, flags, rc) -> None:
             self._mqtt_handle_connect(client, userdata, flags, rc)
@@ -109,7 +111,7 @@ class Framework:
 
     def __init_metrics(self) -> None:
         self._metrics_registry = CollectorRegistry()
-        self._metrics = PrometheusMetrics(self._flask, registry=self._metrics_registry)
+        self._metrics = PrometheusMetrics(registry=self._metrics_registry)
         self._mqtt_messages_received_metric = Counter(
             "mqtt_messages_received", "", registry=self._metrics_registry
         )
@@ -223,13 +225,6 @@ class Framework:
             self._install_signal_handlers()
 
         self._app = app
-        self._start_flask()
-        self._flask.logger.critical(
-            "%s version %s started, framework version %s",
-            app.__class__.__name__,
-            app.get_version(),
-            __version__,
-        )
 
         # share some variables and functions to app
         class CallbacksImpl:
@@ -269,12 +264,23 @@ class Framework:
             def subscribe_to_mqtt_topic(self, topic: str) -> None:
                 self.obj._subscribe_to_mqtt_topic(topic)
 
-        self._app.init(CallbacksImpl(self))
+        self._limiter.init_app(self._flask)
+        self._metrics.init_app(self._flask)
         self._mqtt.init_app(self._flask)
         self._add_scheduler_jobs(
             next_run_time=datetime.now()
             + timedelta(seconds=self._flask.config["DELAY_BEFORE_FIRST_TRY"])
         )
+        self._app.init(CallbacksImpl(self))
+
+        self._start_flask()
+        self._flask.logger.critical(
+            "%s version %s started, framework version %s",
+            app.__class__.__name__,
+            app.get_version(),
+            __version__,
+        )
+
         self._scheduler.start()
         self._started = True
         return 0
@@ -408,9 +414,28 @@ class Framework:
     ###########################################################
 
     def run(self, app: App, config: Config) -> int:
+        """
+        Start the application and block until it is stopped
+        by a signal or shutdown() is called
+
+        :param app: The application to run
+        :param config: The configuration to use
+        :return: 0 if application was started successfully, \
+                 1 if application was already started
+        """
         return self.start(app, config, blocked=True)
 
     def start(self, app: App, config: Config, blocked=False) -> int:
+        """
+        Start the application
+
+        :param app: The application to run
+        :param config: The configuration to use
+        :param blocked: If True, block until application is stopped \
+                        by a signal or shutdown() is called
+        :return: 0 if application was started successfully, \
+                 1 if application was already started
+        """
         with self._lock:
             if retval := self._start(app, config, blocked):
                 return retval
@@ -418,6 +443,9 @@ class Framework:
             self._do_wait()
 
     def shutdown(self) -> None:
+        """
+        Stop the application
+        """
         with self._lock:
             if self._started:
                 self._flask.config["EXIT"] = True
