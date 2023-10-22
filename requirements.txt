@@ -68,7 +68,7 @@ typing-extensions==4.8.0
     # via
     #   flask-limiter
     #   limits
-tzlocal==5.1
+tzlocal==5.2
     # via apscheduler
 werkzeug==3.0.0
     # via flask
