@@ -70,7 +70,7 @@ typing-extensions==4.8.0
     #   limits
 tzlocal==5.2
     # via apscheduler
-werkzeug==3.0.0
+werkzeug==3.0.1
     # via flask
 wrapt==1.15.0
     # via deprecated
