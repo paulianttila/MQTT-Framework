@@ -135,7 +135,7 @@ prometheus-client==0.17.1
     # via
     #   -r requirements.txt
     #   prometheus-flask-exporter
-prometheus-flask-exporter==0.22.4
+prometheus-flask-exporter==0.23.0
     # via -r requirements.txt
 pygments==2.16.1
     # via
