@@ -212,7 +212,7 @@ werkzeug==3.0.1
     # via
     #   -r requirements.txt
     #   flask
-wheel==0.41.2
+wheel==0.42.0
     # via pip-tools
 wrapt==1.15.0
     # via
