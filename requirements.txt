@@ -6,7 +6,7 @@
 #
 apscheduler==3.10.4
     # via -r requirements.in
-blinker==1.6.3
+blinker==1.7.0
     # via flask
 cheroot==10.0.0
     # via -r requirements.in
