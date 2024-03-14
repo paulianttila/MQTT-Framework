@@ -19,7 +19,7 @@ blinker==1.6.3
     # via
     #   -r requirements.txt
     #   flask
-build==1.0.3
+build==1.1.1
     # via pip-tools
 certifi==2023.7.22
     # via requests
