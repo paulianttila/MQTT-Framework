@@ -263,8 +263,10 @@ class Framework:
             ) -> None:
                 self.obj._publish_value_to_mqtt_topic(topic, value, retain=retain)
 
-            def subscribe_to_mqtt_topic(self, topic: str) -> None:
-                self.obj._subscribe_to_mqtt_topic(topic)
+            def subscribe_to_mqtt_topic(
+                self, topic: str, callback: Callable[[str, str], None] = None
+            ) -> None:
+                self.obj._subscribe_to_mqtt_topic(topic, callback)
 
         self._limiter.init_app(self._flask)
         self._metrics.init_app(self._flask)
