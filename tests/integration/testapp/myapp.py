@@ -44,6 +44,7 @@ class MyApp:
         self.subscribe_to_mqtt_topic("request")
         self.subscribe_to_mqtt_topic("config_variable_request")
         self.subscribe_to_mqtt_topic("healthy_check_state")
+        self.subscribe_to_mqtt_topic("callback_request", self.callback_req_received)
 
     def mqtt_message_received(self, topic: str, message: str) -> None:
         self.logger.debug("received data %s for topic %s", message, topic)
@@ -58,6 +59,10 @@ class MyApp:
             self.publish_value_to_mqtt_topic(
                 "healthy_check_state_response", self.healthy_check_state
             )
+
+    def callback_req_received(self, topic: str, message: str) -> None:
+        self.logger.debug("callback_req_received: %s", message)
+        self.publish_value_to_mqtt_topic("callback_response", message)
 
     def do_healthy_check(self) -> bool:
         self.logger.debug("do_healthy_check called")
