@@ -31,6 +31,15 @@ stages:
       payload: 'test_message1'
       timeout: 3
 
+  - name: test callback function
+    mqtt_publish:
+      topic: 'myapp/callback_request'
+      payload: '12345678'
+    mqtt_response:
+      topic: 'myapp/callback_response'
+      payload: '12345678' 
+      timeout: 3
+
   - name: test updateNow triggering
     mqtt_publish:
       topic: 'myapp/updateNow'

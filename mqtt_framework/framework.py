@@ -6,6 +6,7 @@ import signal
 import threading
 import logging
 import time
+from typing import Callable
 import tzlocal
 
 from datetime import datetime, timedelta
@@ -52,6 +53,7 @@ class Framework:
         self.__init_metrics()
         self.__init_mqtt()
         self._started = False
+        self._mqtt_callbacks = {}
 
     def __add_trace_level_to_logger(self) -> None:
         TRACE_LOG_LEVEL = 5
@@ -261,8 +263,10 @@ class Framework:
             ) -> None:
                 self.obj._publish_value_to_mqtt_topic(topic, value, retain=retain)
 
-            def subscribe_to_mqtt_topic(self, topic: str) -> None:
-                self.obj._subscribe_to_mqtt_topic(topic)
+            def subscribe_to_mqtt_topic(
+                self, topic: str, callback: Callable[[str, str], None] = None
+            ) -> None:
+                self.obj._subscribe_to_mqtt_topic(topic, callback)
 
         self._limiter.init_app(self._flask)
         self._metrics.init_app(self._flask)
@@ -356,10 +360,14 @@ class Framework:
     def _to_full_mqtt_topic_name(self, topic: str) -> str:
         return self._flask.config["MQTT_TOPIC_PREFIX"] + topic
 
-    def _subscribe_to_mqtt_topic(self, topic: str) -> None:
+    def _subscribe_to_mqtt_topic(
+        self, topic: str, callback: Callable[[str, str], None] = None
+    ) -> None:
         fulltopic = self._to_full_mqtt_topic_name(topic)
         self._flask.logger.debug(f"Subscribe to MQTT topic: {fulltopic}")
         self._mqtt.subscribe(fulltopic)
+        if callback:
+            self._mqtt_callbacks[topic] = callback
 
     def _publish_value_to_mqtt_topic(
         self, topic: str, value: str, retain=False
@@ -405,7 +413,10 @@ class Framework:
             self._flask.logger.setLevel(data.upper())
         else:
             try:
-                self._app.mqtt_message_received(topic, data)
+                if callback := self._mqtt_callbacks.get(topic):
+                    callback(topic, data)
+                else:
+                    self._app.mqtt_message_received(topic, data)
             except Exception as e:
                 self._flask.logger.exception(f"Error occured: {e}")
 

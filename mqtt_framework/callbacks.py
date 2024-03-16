@@ -1,5 +1,5 @@
 import logging
-from typing import Protocol, runtime_checkable
+from typing import Callable, Protocol, runtime_checkable
 
 from prometheus_client import CollectorRegistry
 
@@ -33,6 +33,8 @@ class Callbacks(Protocol):
         """Publish data to MQTT topic"""
         ...
 
-    def subscribe_to_mqtt_topic(self, topic: str) -> None:
+    def subscribe_to_mqtt_topic(
+        self, topic: str, callback: Callable[[str, str], None] = None
+    ) -> None:
         """Subscribe to MQTT topic"""
         ...
