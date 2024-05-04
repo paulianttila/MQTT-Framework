@@ -33,7 +33,7 @@ click==8.1.7
     #   black
     #   flask
     #   pip-tools
-coverage==7.3.2
+coverage==7.5.1
     # via -r requirements-dev.in
 deprecated==1.2.14
     # via
