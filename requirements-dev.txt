@@ -63,7 +63,7 @@ importlib-resources==6.1.0
     #   limits
 iniconfig==2.0.0
     # via pytest
-itsdangerous==2.1.2
+itsdangerous==2.2.0
     # via
     #   -r requirements.txt
     #   flask
