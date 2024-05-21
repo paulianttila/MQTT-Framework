@@ -131,7 +131,7 @@ platformdirs==3.11.0
     # via black
 pluggy==1.5.0
     # via pytest
-prometheus-client==0.17.1
+prometheus-client==0.20.0
     # via
     #   -r requirements.txt
     #   prometheus-flask-exporter
