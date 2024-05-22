@@ -167,7 +167,7 @@ referencing==0.30.2
     # via
     #   jsonschema
     #   jsonschema-specifications
-requests==2.32.0
+requests==2.32.2
     # via tavern
 rich==13.6.0
     # via
