@@ -197,7 +197,7 @@ stevedore==4.1.1
     #   tavern
 tavern==2.11.0
     # via -r requirements-dev.in
-typing-extensions==4.8.0
+typing-extensions==4.11.0
     # via
     #   -r requirements.txt
     #   flask-limiter
