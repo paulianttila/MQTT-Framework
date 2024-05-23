@@ -169,7 +169,7 @@ referencing==0.30.2
     #   jsonschema-specifications
 requests==2.32.2
     # via tavern
-rich==13.6.0
+rich==13.7.1
     # via
     #   -r requirements.txt
     #   bandit
