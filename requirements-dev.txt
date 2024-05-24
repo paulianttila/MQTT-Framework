@@ -214,7 +214,7 @@ werkzeug==3.0.3
     #   flask
 wheel==0.43.0
     # via pip-tools
-wrapt==1.15.0
+wrapt==1.16.0
     # via
     #   -r requirements.txt
     #   deprecated
