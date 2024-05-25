@@ -48,7 +48,7 @@ more-itertools==10.2.0
     #   jaraco-functools
 ordered-set==4.1.0
     # via flask-limiter
-packaging==23.2
+packaging==24.0
     # via limits
 paho-mqtt==1.6.1
     # via flask-mqtt
