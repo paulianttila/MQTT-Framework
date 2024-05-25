@@ -127,7 +127,7 @@ pbr==6.0.0
     # via stevedore
 pip-tools==7.4.1
     # via -r requirements-dev.in
-platformdirs==3.11.0
+platformdirs==4.2.2
     # via black
 pluggy==1.5.0
     # via pytest
