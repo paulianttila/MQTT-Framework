@@ -11,7 +11,7 @@ attrs==23.2.0
     #   jsonschema
     #   pytest
     #   referencing
-bandit[toml]==1.7.8
+bandit[toml]==1.7.9
     # via -r requirements-dev.in
 black==23.10.1
     # via -r requirements-dev.in
