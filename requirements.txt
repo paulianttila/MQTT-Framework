@@ -64,7 +64,7 @@ rich==13.7.1
     # via flask-limiter
 six==1.16.0
     # via apscheduler
-typing-extensions==4.12.1
+typing-extensions==4.12.2
     # via
     #   flask-limiter
     #   limits
