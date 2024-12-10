@@ -12,7 +12,7 @@ cheroot==10.0.1
     # via -r requirements.in
 click==8.1.7
     # via flask
-deprecated==1.2.14
+deprecated==1.2.15
     # via limits
 flask==3.0.3
     # via
