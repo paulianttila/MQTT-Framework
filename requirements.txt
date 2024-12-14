@@ -52,7 +52,7 @@ packaging==24.0
     # via limits
 paho-mqtt==2.1.0
     # via flask-mqtt
-prometheus-client==0.20.0
+prometheus-client==0.21.1
     # via prometheus-flask-exporter
 prometheus-flask-exporter==0.23.1
     # via -r requirements.in
