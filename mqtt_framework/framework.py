@@ -270,13 +270,12 @@ class Framework:
 
         self._limiter.init_app(self._flask)
         self._metrics.init_app(self._flask)
+        self._app.init(CallbacksImpl(self))
         self._mqtt.init_app(self._flask)
         self._add_scheduler_jobs(
             next_run_time=datetime.now()
             + timedelta(seconds=self._flask.config["DELAY_BEFORE_FIRST_TRY"])
         )
-        self._app.init(CallbacksImpl(self))
-
         self._start_flask()
         self._flask.logger.critical(
             "%s version %s started, framework version %s",
