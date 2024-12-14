@@ -28,7 +28,7 @@ importlib-resources==6.4.5
     # via limits
 itsdangerous==2.2.0
     # via flask
-jaraco-functools==4.0.1
+jaraco-functools==4.1.0
     # via cheroot
 jinja2==3.1.4
     # via flask
