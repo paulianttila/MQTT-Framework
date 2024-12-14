@@ -4,7 +4,7 @@
 #
 #    pip-compile requirements-dev.in
 #
-apscheduler==3.10.4
+apscheduler==3.11.0
     # via -r requirements.txt
 attrs==23.2.0
     # via
