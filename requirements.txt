@@ -50,7 +50,7 @@ ordered-set==4.1.0
     # via flask-limiter
 packaging==24.0
     # via limits
-paho-mqtt==1.6.1
+paho-mqtt==2.1.0
     # via flask-mqtt
 prometheus-client==0.20.0
     # via prometheus-flask-exporter
