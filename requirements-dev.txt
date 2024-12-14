@@ -15,7 +15,7 @@ bandit[toml]==1.7.9
     # via -r requirements-dev.in
 black==24.10.0
     # via -r requirements-dev.in
-blinker==1.8.2
+blinker==1.9.0
     # via
     #   -r requirements.txt
     #   flask
