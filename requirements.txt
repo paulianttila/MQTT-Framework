@@ -60,7 +60,7 @@ pygments==2.18.0
     # via rich
 pytz==2024.1
     # via apscheduler
-rich==13.7.1
+rich==13.9.4
     # via flask-limiter
 six==1.17.0
     # via apscheduler
