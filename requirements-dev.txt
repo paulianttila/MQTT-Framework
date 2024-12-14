@@ -109,7 +109,7 @@ ordered-set==4.1.0
     # via
     #   -r requirements.txt
     #   flask-limiter
-packaging==24.0
+packaging==24.2
     # via
     #   -r requirements.txt
     #   black
