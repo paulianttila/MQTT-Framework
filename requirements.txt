@@ -14,7 +14,7 @@ click==8.1.7
     # via flask
 deprecated==1.2.15
     # via limits
-flask==3.0.3
+flask==3.1.0
     # via
     #   -r requirements.in
     #   flask-limiter
