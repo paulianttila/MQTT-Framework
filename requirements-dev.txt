@@ -141,7 +141,7 @@ pygments==2.18.0
     # via
     #   -r requirements.txt
     #   rich
-pyjwt==2.8.0
+pyjwt==2.10.1
     # via tavern
 pykwalify==1.8.0
     # via tavern
