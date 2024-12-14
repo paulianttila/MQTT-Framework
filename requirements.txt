@@ -54,7 +54,7 @@ paho-mqtt==1.6.1
     # via flask-mqtt
 prometheus-client==0.20.0
     # via prometheus-flask-exporter
-prometheus-flask-exporter==0.23.0
+prometheus-flask-exporter==0.23.1
     # via -r requirements.in
 pygments==2.18.0
     # via rich
