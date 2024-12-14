@@ -208,7 +208,7 @@ tzlocal==5.2
     #   apscheduler
 urllib3==2.2.2
     # via requests
-werkzeug==3.0.6
+werkzeug==3.1.3
     # via
     #   -r requirements.txt
     #   flask
