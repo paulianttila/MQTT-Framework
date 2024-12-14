@@ -35,7 +35,7 @@ click==8.1.7
     #   pip-tools
 coverage==7.5.4
     # via -r requirements-dev.in
-deprecated==1.2.14
+deprecated==1.2.15
     # via
     #   -r requirements.txt
     #   limits
