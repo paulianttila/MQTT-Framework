@@ -27,7 +27,7 @@ charset-normalizer==3.4.0
     # via requests
 cheroot==10.0.1
     # via -r requirements.txt
-click==8.1.7
+click==8.1.8
     # via
     #   -r requirements.txt
     #   black
