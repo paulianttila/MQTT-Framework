@@ -81,7 +81,7 @@ jsonschema==4.23.0
     # via tavern
 jsonschema-specifications==2024.10.1
     # via jsonschema
-limits==3.14.1
+limits==4.0.0
     # via
     #   -r requirements.txt
     #   flask-limiter
