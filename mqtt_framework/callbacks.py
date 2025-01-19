@@ -29,12 +29,14 @@ class Callbacks(Protocol):
         """Add custom url rules"""
         ...
 
-    def publish_value_to_mqtt_topic(self, topic: str, value: str, retain=False) -> None:
+    def publish_value_to_mqtt_topic(
+        self, topic: str, value: str | bytes | bytearray | int | float, retain=False
+    ) -> None:
         """Publish data to MQTT topic"""
         ...
 
     def subscribe_to_mqtt_topic(
-        self, topic: str, callback: Callable[[str, str], None] = None
+        self, topic: str, callback: Callable[[str, str], None] | None = None
     ) -> None:
         """Subscribe to MQTT topic"""
         ...

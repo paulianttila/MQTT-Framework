@@ -1,11 +1,13 @@
+from typing import Literal
+from flask.wrappers import Response
 from prometheus_client import Counter
 from flask import render_template, jsonify
 
-from mqtt_framework.app import TriggerSource
+from mqtt_framework.app import App, TriggerSource
 from mqtt_framework.callbacks import Callbacks
 
 
-class MyApp:
+class MyApp(App):
     def init(self, callbacks: Callbacks) -> None:
         self.logger = callbacks.get_logger()
         self.config = callbacks.get_config()
@@ -97,9 +99,13 @@ class MyApp:
                 "cron_trigger_counter", self.cron_trigger_counter
             )
 
-    def result_html_page(self):
-        return render_template("index.html", counter=self.counter)
+    def result_html_page(self) -> str:
+        return render_template(
+            "index.html",
+            interval_counter=self.interval_trigger_counter,
+            cron_counter=self.cron_trigger_counter,
+        )
 
-    def result_json_data(self):
+    def result_json_data(self) -> tuple[Response, Literal[200]]:
         data = {"id": 1, "message": "json example data"}
         return jsonify(data), 200
