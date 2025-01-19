@@ -6,6 +6,7 @@ def get_metric(result, metric) -> float:
         return val
     return float("NaN")
 
+
 def check_metrics(response):
     assert get_metric(response.text, "do_update_exceptions_total") == 0
     assert get_metric(response.text, "manual_trigger_counter_total") == 3
