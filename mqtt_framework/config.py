@@ -27,17 +27,17 @@ class Config(object):
     MQTT_LAST_WILL_MESSAGE = "offline"
     MQTT_LAST_WILL_RETAIN = True
 
-    def __init__(self, app_name: str):
+    def __init__(self, app_name: str) -> None:
         self.app_name = app_name
 
     @property
-    def MQTT_CLIENT_ID(self):
+    def MQTT_CLIENT_ID(self) -> str:
         return f"{self.app_name}"
 
     @property
-    def MQTT_TOPIC_PREFIX(self):
+    def MQTT_TOPIC_PREFIX(self) -> str:
         return f"{self.app_name}/"
 
     @property
-    def MQTT_LAST_WILL_TOPIC(self):
+    def MQTT_LAST_WILL_TOPIC(self) -> str:
         return f"{self.app_name}/status"

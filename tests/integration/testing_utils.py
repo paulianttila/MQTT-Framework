@@ -4,6 +4,7 @@ def get_metric(result, metric) -> float:
         val = float(line.replace(metric, "").strip())
         print(f"{metric}={val}")
         return val
+    return float("NaN")
 
 
 def check_metrics(response):
