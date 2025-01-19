@@ -60,7 +60,8 @@ class Framework:
         logging.addLevelName(self._TRACE_LOG_LEVEL, "TRACE")
 
     def _trace_log(self, message, *args, **kwargs) -> None:
-        self._flask.logger.log(self._TRACE_LOG_LEVEL, message, args, **kwargs)
+        if self._flask.logger.isEnabledFor(self._TRACE_LOG_LEVEL):
+            self._flask.logger.log(self._TRACE_LOG_LEVEL, message, *args, **kwargs)
 
     def __init_flask(self) -> None:
         # config not yet available, so read values directly from env vars
