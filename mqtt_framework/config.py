@@ -1,4 +1,4 @@
-""" Base configuration """
+"""Base configuration"""
 
 import ssl
 
