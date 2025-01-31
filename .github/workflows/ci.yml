@@ -44,7 +44,7 @@ jobs:
         run: ruff check --output-format=github .
 
       - name: Run Black
-        run: black --check .
+        run: black --check --diff .
 
       - name: Run Bandit scan
         run: bandit -c pyproject.toml -r .
