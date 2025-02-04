@@ -123,7 +123,7 @@ paho-mqtt==2.1.0
     #   tavern
 pathspec==0.12.1
     # via black
-pbr==6.1.0
+pbr==6.1.1
     # via stevedore
 pip-tools==7.4.1
     # via -r requirements-dev.in
