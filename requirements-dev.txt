@@ -202,7 +202,7 @@ typing-extensions==4.12.2
     #   -r requirements.txt
     #   flask-limiter
     #   limits
-tzlocal==5.2
+tzlocal==5.3
     # via
     #   -r requirements.txt
     #   apscheduler
