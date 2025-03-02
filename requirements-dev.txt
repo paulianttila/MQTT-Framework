@@ -147,7 +147,7 @@ pykwalify==1.8.0
     # via tavern
 pyproject-hooks==1.2.0
     # via build
-pytest==7.4.4
+pytest==8.3.5
     # via
     #   -r requirements-dev.in
     #   tavern
