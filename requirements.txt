@@ -32,7 +32,7 @@ jaraco-functools==4.1.0
     # via cheroot
 jinja2==3.1.5
     # via flask
-limits==4.0.1
+limits==4.1
     # via flask-limiter
 markdown-it-py==3.0.0
     # via rich
