@@ -20,7 +20,7 @@ flask==3.1.0
     #   flask-limiter
     #   flask-mqtt
     #   prometheus-flask-exporter
-flask-limiter==3.10.1
+flask-limiter==3.11.0
     # via -r requirements.in
 flask-mqtt @ git+https://github.com/stlehmann/Flask-MQTT.git@v1.2.0
     # via -r requirements.in
