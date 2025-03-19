@@ -61,7 +61,7 @@ importlib-resources==6.5.2
     # via
     #   -r requirements.txt
     #   limits
-iniconfig==2.0.0
+iniconfig==2.1.0
     # via pytest
 itsdangerous==2.2.0
     # via
