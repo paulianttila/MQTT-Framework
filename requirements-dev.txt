@@ -174,7 +174,7 @@ rich==13.9.4
     #   -r requirements.txt
     #   bandit
     #   flask-limiter
-rpds-py==0.23.1
+rpds-py==0.24.0
     # via
     #   jsonschema
     #   referencing
