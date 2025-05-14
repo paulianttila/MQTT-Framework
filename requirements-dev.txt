@@ -98,7 +98,7 @@ mdurl==0.1.2
     # via
     #   -r requirements.txt
     #   markdown-it-py
-more-itertools==10.6.0
+more-itertools==10.7.0
     # via
     #   -r requirements.txt
     #   cheroot
