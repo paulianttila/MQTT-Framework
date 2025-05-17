@@ -103,7 +103,7 @@ more-itertools==10.7.0
     #   -r requirements.txt
     #   cheroot
     #   jaraco-functools
-mypy-extensions==1.0.0
+mypy-extensions==1.1.0
     # via black
 ordered-set==4.1.0
     # via
