@@ -393,32 +393,33 @@ class Framework:
         self._mqtt_messages_received_metric.inc()
         data = str(message.payload.decode("utf-8"))
         self._flask.logger.debug(
-            "MQTT message received: topic=%s, qos=%s, data: %s",
-            message.topic,
-            str(message.qos),
-            data,
+            f"MQTT message received: topic={message.topic}, "
+            f"qos={message.qos}, data: {data}"
         )
         topic = message.topic.removeprefix(self._flask.config["MQTT_TOPIC_PREFIX"])
 
-        if topic == "updateNow" and data.lower() in {"yes", "true", "1"}:
-            self._update_now()
-        elif topic == "setLogLevel" and data.upper() in {
-            "TRACE",
-            "DEBUG",
-            "INFO",
-            "WARNING",
-            "ERROR",
-            "CRITICAL",
-        }:
-            self._flask.logger.setLevel(data.upper())
-        else:
-            try:
+        try:
+            if topic == "updateNow" and data.lower() in {"yes", "true", "1"}:
+                self._update_now()
+            elif topic == "setLogLevel" and data.upper() in {
+                "TRACE",
+                "DEBUG",
+                "INFO",
+                "WARNING",
+                "ERROR",
+                "CRITICAL",
+            }:
+                self._flask.logger.setLevel(data.upper())
+            else:
                 if callback := self._mqtt_callbacks.get(topic):
                     callback(topic, data)
                 else:
                     self._app.mqtt_message_received(topic, data)
-            except Exception as e:
-                self._flask.logger.exception(f"Error occured: {e}")
+        except Exception as e:
+            self._flask.logger.exception(
+                f"Error occurred while processing MQTT message, "
+                f"topic={topic}, data: {data}: {e}"
+            )
 
     ###########################################################
     # Public methods
