@@ -111,7 +111,7 @@ class Framework:
 
         @self._mqtt.on_log()
         def handle_logging(client, userdata, level, buf) -> None:
-            self._trace_log("MQTT: %s", buf)
+            self._trace_log(f"MQTT: {buf}")
 
     def __init_metrics(self) -> None:
         self._metrics_registry = CollectorRegistry()
@@ -148,7 +148,7 @@ class Framework:
         self._server_thread.join()
 
     def _signal_handler(self, sig, frame) -> None:
-        self._trace_log("Signal %s received", signal.strsignal(sig))
+        self._trace_log(f"Signal {signal.strsignal(sig)} received")
         self.shutdown()
 
     def _install_signal_handlers(self) -> None:
@@ -283,10 +283,8 @@ class Framework:
         )
         self._start_flask()
         self._flask.logger.critical(
-            "%s version %s started, framework version %s",
-            app.__class__.__name__,
-            app.get_version(),
-            __version__,
+            f"{app.__class__.__name__} version {app.get_version()} started, "
+            f"framework version {__version__} "
         )
 
         self._scheduler.start()
