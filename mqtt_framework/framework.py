@@ -30,7 +30,7 @@ from mqtt_framework.config import Config as Config
 from mqtt_framework.read_only_dict import ReadOnlyDict
 
 # current MQTT-Framework version
-__version__ = "1.2.0"
+__version__ = "2.0.1"
 
 
 class Framework:
