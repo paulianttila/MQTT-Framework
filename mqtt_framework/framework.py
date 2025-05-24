@@ -34,6 +34,10 @@ __version__ = "2.0.1"
 
 
 class Framework:
+    TOPIC_STATUS = "status"
+    TOPIC_UPDATE_NOW = "updateNow"
+    TOPIC_SET_LOG_LEVEL = "setLogLevel"
+
     ###########################################################
     # Init and shutdown methods
     ###########################################################
@@ -294,7 +298,7 @@ class Framework:
         self._scheduler.shutdown(wait=True)
         self._stop_flask()
         self._mqtt.unsubscribe_all()
-        self._publish_value_to_mqtt_topic("status", "offline", True)
+        self._publish_value_to_mqtt_topic(self.TOPIC_STATUS, "offline", True)
         self._mqtt._disconnect()
         self._started = False
 
@@ -381,9 +385,9 @@ class Framework:
             self._mqtt.publish(fulltopic, value, retain=retain)  # type: ignore
 
     def _mqtt_handle_connect(self, client, userdata, flags, rc) -> None:
-        self._publish_value_to_mqtt_topic("status", "online", True)
-        self._subscribe_to_mqtt_topic("updateNow")
-        self._subscribe_to_mqtt_topic("setLogLevel")
+        self._publish_value_to_mqtt_topic(self.TOPIC_STATUS, "online", True)
+        self._subscribe_to_mqtt_topic(self.TOPIC_UPDATE_NOW)
+        self._subscribe_to_mqtt_topic(self.TOPIC_SET_LOG_LEVEL)
         try:
             self._app.subscribe_to_mqtt_topics()
         except Exception as e:
@@ -399,9 +403,9 @@ class Framework:
         topic = message.topic.removeprefix(self._flask.config["MQTT_TOPIC_PREFIX"])
 
         try:
-            if topic == "updateNow" and data.lower() in {"yes", "true", "1"}:
+            if topic == self.TOPIC_UPDATE_NOW and data.lower() in {"yes", "true", "1"}:
                 self._update_now()
-            elif topic == "setLogLevel" and data.upper() in {
+            elif topic == self.TOPIC_SET_LOG_LEVEL and data.upper() in {
                 "TRACE",
                 "DEBUG",
                 "INFO",
