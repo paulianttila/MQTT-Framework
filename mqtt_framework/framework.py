@@ -334,7 +334,7 @@ class Framework:
             self._flask.logger.debug("Healthy check OK")
             return "OK", 200
         else:
-            self._flask.logger.warn("Healthy check FAIL")
+            self._flask.logger.warning("Healthy check FAIL")
             return "FAIL", 500
 
     def _rest_get_jobs(self) -> tuple[Response, int]:
