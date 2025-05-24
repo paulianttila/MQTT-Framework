@@ -391,7 +391,7 @@ class Framework:
         try:
             self._app.subscribe_to_mqtt_topics()
         except Exception as e:
-            self._flask.logger.exception(f"Error occured: {e}")
+            self._flask.logger.exception(f"Error occurred: {e}")
 
     def _mqtt_message_received(self, client, userdata, message) -> None:
         self._mqtt_messages_received_metric.inc()
@@ -470,7 +470,7 @@ class Framework:
                 try:
                     self._shutdown()
                 except Exception as e:
-                    self._flask.logger.exception(f"Error occured: {e}")
+                    self._flask.logger.exception(f"Error occurred: {e}")
                 self._flask.logger.critical("Application stopped")
             else:
                 self._flask.logger.debug("Application already stopped")
