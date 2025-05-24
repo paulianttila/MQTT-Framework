@@ -228,7 +228,7 @@ class Framework:
 
         # share some variables and functions to app
         class CallbacksImpl:
-            def __init__(self, obj):
+            def __init__(self, obj) -> None:
                 self.obj = obj
 
             def get_config(self) -> dict:
