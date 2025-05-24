@@ -30,10 +30,14 @@ from mqtt_framework.config import Config as Config
 from mqtt_framework.read_only_dict import ReadOnlyDict
 
 # current MQTT-Framework version
-__version__ = "1.2.0"
+__version__ = "2.0.1"
 
 
 class Framework:
+    TOPIC_STATUS = "status"
+    TOPIC_UPDATE_NOW = "updateNow"
+    TOPIC_SET_LOG_LEVEL = "setLogLevel"
+
     ###########################################################
     # Init and shutdown methods
     ###########################################################
@@ -107,7 +111,7 @@ class Framework:
 
         @self._mqtt.on_log()
         def handle_logging(client, userdata, level, buf) -> None:
-            self._trace_log("MQTT: %s", buf)
+            self._trace_log(f"MQTT: {buf}")
 
     def __init_metrics(self) -> None:
         self._metrics_registry = CollectorRegistry()
@@ -144,7 +148,7 @@ class Framework:
         self._server_thread.join()
 
     def _signal_handler(self, sig, frame) -> None:
-        self._trace_log("Signal %s received", signal.strsignal(sig))
+        self._trace_log(f"Signal {signal.strsignal(sig)} received")
         self.shutdown()
 
     def _install_signal_handlers(self) -> None:
@@ -228,7 +232,7 @@ class Framework:
 
         # share some variables and functions to app
         class CallbacksImpl:
-            def __init__(self, obj):
+            def __init__(self, obj) -> None:
                 self.obj = obj
 
             def get_config(self) -> dict:
@@ -279,10 +283,8 @@ class Framework:
         )
         self._start_flask()
         self._flask.logger.critical(
-            "%s version %s started, framework version %s",
-            app.__class__.__name__,
-            app.get_version(),
-            __version__,
+            f"{app.__class__.__name__} version {app.get_version()} started, "
+            f"framework version {__version__} "
         )
 
         self._scheduler.start()
@@ -294,7 +296,7 @@ class Framework:
         self._scheduler.shutdown(wait=True)
         self._stop_flask()
         self._mqtt.unsubscribe_all()
-        self._publish_value_to_mqtt_topic("status", "offline", True)
+        self._publish_value_to_mqtt_topic(self.TOPIC_STATUS, "offline", True)
         self._mqtt._disconnect()
         self._started = False
 
@@ -334,7 +336,7 @@ class Framework:
             self._flask.logger.debug("Healthy check OK")
             return "OK", 200
         else:
-            self._flask.logger.warn("Healthy check FAIL")
+            self._flask.logger.warning("Healthy check FAIL")
             return "FAIL", 500
 
     def _rest_get_jobs(self) -> tuple[Response, int]:
@@ -381,44 +383,45 @@ class Framework:
             self._mqtt.publish(fulltopic, value, retain=retain)  # type: ignore
 
     def _mqtt_handle_connect(self, client, userdata, flags, rc) -> None:
-        self._publish_value_to_mqtt_topic("status", "online", True)
-        self._subscribe_to_mqtt_topic("updateNow")
-        self._subscribe_to_mqtt_topic("setLogLevel")
+        self._publish_value_to_mqtt_topic(self.TOPIC_STATUS, "online", True)
+        self._subscribe_to_mqtt_topic(self.TOPIC_UPDATE_NOW)
+        self._subscribe_to_mqtt_topic(self.TOPIC_SET_LOG_LEVEL)
         try:
             self._app.subscribe_to_mqtt_topics()
         except Exception as e:
-            self._flask.logger.exception(f"Error occured: {e}")
+            self._flask.logger.exception(f"Error occurred: {e}")
 
     def _mqtt_message_received(self, client, userdata, message) -> None:
         self._mqtt_messages_received_metric.inc()
         data = str(message.payload.decode("utf-8"))
         self._flask.logger.debug(
-            "MQTT message received: topic=%s, qos=%s, data: %s",
-            message.topic,
-            str(message.qos),
-            data,
+            f"MQTT message received: topic={message.topic}, "
+            f"qos={message.qos}, data: {data}"
         )
         topic = message.topic.removeprefix(self._flask.config["MQTT_TOPIC_PREFIX"])
 
-        if topic == "updateNow" and data.lower() in {"yes", "true", "1"}:
-            self._update_now()
-        elif topic == "setLogLevel" and data.upper() in {
-            "TRACE",
-            "DEBUG",
-            "INFO",
-            "WARNING",
-            "ERROR",
-            "CRITICAL",
-        }:
-            self._flask.logger.setLevel(data.upper())
-        else:
-            try:
+        try:
+            if topic == self.TOPIC_UPDATE_NOW and data.lower() in {"yes", "true", "1"}:
+                self._update_now()
+            elif topic == self.TOPIC_SET_LOG_LEVEL and data.upper() in {
+                "TRACE",
+                "DEBUG",
+                "INFO",
+                "WARNING",
+                "ERROR",
+                "CRITICAL",
+            }:
+                self._flask.logger.setLevel(data.upper())
+            else:
                 if callback := self._mqtt_callbacks.get(topic):
                     callback(topic, data)
                 else:
                     self._app.mqtt_message_received(topic, data)
-            except Exception as e:
-                self._flask.logger.exception(f"Error occured: {e}")
+        except Exception as e:
+            self._flask.logger.exception(
+                f"Error occurred while processing MQTT message, "
+                f"topic={topic}, data: {data}: {e}"
+            )
 
     ###########################################################
     # Public methods
@@ -465,7 +468,7 @@ class Framework:
                 try:
                     self._shutdown()
                 except Exception as e:
-                    self._flask.logger.exception(f"Error occured: {e}")
+                    self._flask.logger.exception(f"Error occurred: {e}")
                 self._flask.logger.critical("Application stopped")
             else:
                 self._flask.logger.debug("Application already stopped")
