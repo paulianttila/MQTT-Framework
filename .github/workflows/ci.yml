@@ -39,10 +39,14 @@ jobs:
 
       - name: Install tools
         run: |
-          uv venv .venv-tools && uv pip install -r requirements-dev.txt
+          uv venv .venv-tools
+          source .venv-tools/bin/activate
+          uv pip install -r requirements-dev.txt
       - name: Install app dependencies
         run: |
-          uv venv .venv-app && uv pip install -r requirements.txt
+          uv venv .venv
+          source .venv/bin/activate
+          uv pip install -r requirements.txt
 
       - name: Run Ruff
         run: .venv-tools/bin/ruff check --output-format=github .
