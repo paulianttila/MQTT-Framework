@@ -44,8 +44,8 @@ jobs:
           uv pip install -r requirements-dev.txt
       - name: Install app dependencies
         run: |
-          uv venv .venv-app
-          source .venv-app/bin/activate
+          uv venv .venv
+          source .venv/bin/activate
           uv pip install -r requirements.txt
 
       - name: Run Ruff
@@ -65,7 +65,6 @@ jobs:
         run: |
           bash tests/integration/mosquitto/run_mosquitto.sh
           sleep 3
-          source .venv-app/bin/activate
           bash run_tests.sh
 
       - name: Run code coverage
