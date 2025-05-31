@@ -4,123 +4,49 @@
 #
 #    pip-compile requirements-dev.in
 #
-apscheduler==3.11.0
-    # via -r requirements.txt
 attrs==25.3.0
     # via
     #   jsonschema
-    #   pytest
     #   referencing
 bandit[toml]==1.8.3
     # via -r requirements-dev.in
 black==25.1.0
     # via -r requirements-dev.in
-blinker==1.9.0
-    # via
-    #   -r requirements.txt
-    #   flask
 build==1.2.2.post1
     # via pip-tools
 certifi==2025.4.26
     # via requests
 charset-normalizer==3.4.2
     # via requests
-cheroot==10.0.1
-    # via -r requirements.txt
 click==8.2.1
     # via
-    #   -r requirements.txt
     #   black
-    #   flask
     #   pip-tools
 coverage==7.8.2
     # via -r requirements-dev.in
-deprecated==1.2.18
-    # via
-    #   -r requirements.txt
-    #   limits
 docopt==0.6.2
     # via pykwalify
-flask==3.1.1
-    # via
-    #   -r requirements.txt
-    #   flask-limiter
-    #   flask-mqtt
-    #   prometheus-flask-exporter
-flask-limiter==3.12
-    # via -r requirements.txt
-flask-mqtt @ git+https://github.com/stlehmann/Flask-MQTT.git@v1.2.0
-    # via -r requirements.txt
-gitdb==4.0.12
-    # via gitpython
-gitpython==3.1.44
-    # via bandit
 idna==3.10
     # via requests
-importlib-resources==6.5.2
-    # via
-    #   -r requirements.txt
-    #   limits
 iniconfig==2.1.0
     # via pytest
-itsdangerous==2.2.0
-    # via
-    #   -r requirements.txt
-    #   flask
-jaraco-functools==4.1.0
-    # via
-    #   -r requirements.txt
-    #   cheroot
-jinja2==3.1.6
-    # via
-    #   -r requirements.txt
-    #   flask
 jmespath==1.0.1
     # via tavern
 jsonschema==4.23.0
     # via tavern
 jsonschema-specifications==2025.4.1
     # via jsonschema
-limits==5.2.0
-    # via
-    #   -r requirements.txt
-    #   flask-limiter
 markdown-it-py==3.0.0
-    # via
-    #   -r requirements.txt
-    #   rich
-markupsafe==3.0.2
-    # via
-    #   -r requirements.txt
-    #   jinja2
-    #   werkzeug
+    # via rich
 mdurl==0.1.2
-    # via
-    #   -r requirements.txt
-    #   markdown-it-py
-more-itertools==10.7.0
-    # via
-    #   -r requirements.txt
-    #   cheroot
-    #   jaraco-functools
+    # via markdown-it-py
 mypy-extensions==1.1.0
     # via black
-ordered-set==4.1.0
-    # via
-    #   -r requirements.txt
-    #   flask-limiter
 packaging==24.2
     # via
-    #   -r requirements.txt
     #   black
     #   build
-    #   limits
     #   pytest
-paho-mqtt==2.1.0
-    # via
-    #   -r requirements.txt
-    #   flask-mqtt
-    #   tavern
 pathspec==0.12.1
     # via black
 pbr==6.1.1
@@ -131,22 +57,16 @@ platformdirs==4.3.8
     # via black
 pluggy==1.6.0
     # via pytest
-prometheus-client==0.22.0
-    # via
-    #   -r requirements.txt
-    #   prometheus-flask-exporter
-prometheus-flask-exporter==0.23.2
-    # via -r requirements.txt
 pygments==2.19.1
-    # via
-    #   -r requirements.txt
-    #   rich
+    # via rich
 pyjwt==2.10.1
     # via tavern
 pykwalify==1.8.0
     # via tavern
 pyproject-hooks==1.2.0
-    # via build
+    # via
+    #   build
+    #   pip-tools
 pytest==7.4.4
     # via
     #   -r requirements-dev.in
@@ -155,10 +75,6 @@ python-box==6.1.0
     # via tavern
 python-dateutil==2.9.0.post0
     # via pykwalify
-pytz==2025.2
-    # via
-    #   -r requirements.txt
-    #   apscheduler
 pyyaml==6.0.2
     # via
     #   bandit
@@ -170,10 +86,7 @@ referencing==0.36.2
 requests==2.32.3
     # via tavern
 rich==13.9.4
-    # via
-    #   -r requirements.txt
-    #   bandit
-    #   flask-limiter
+    # via bandit
 rpds-py==0.25.1
     # via
     #   jsonschema
@@ -185,12 +98,7 @@ ruamel-yaml-clib==0.2.12
 ruff==0.11.11
     # via -r requirements-dev.in
 six==1.17.0
-    # via
-    #   -r requirements.txt
-    #   apscheduler
-    #   python-dateutil
-smmap==5.0.2
-    # via gitdb
+    # via python-dateutil
 stevedore==4.1.1
     # via
     #   bandit
@@ -198,26 +106,11 @@ stevedore==4.1.1
 tavern==3.0.0a5
     # via -r requirements-dev.in
 typing-extensions==4.13.2
-    # via
-    #   -r requirements.txt
-    #   flask-limiter
-    #   limits
-tzlocal==5.3.1
-    # via
-    #   -r requirements.txt
-    #   apscheduler
+    # via referencing
 urllib3==2.4.0
     # via requests
-werkzeug==3.1.3
-    # via
-    #   -r requirements.txt
-    #   flask
 wheel==0.45.1
     # via pip-tools
-wrapt==1.17.2
-    # via
-    #   -r requirements.txt
-    #   deprecated
 
 # The following packages are considered to be unsafe in a requirements file:
 # pip
