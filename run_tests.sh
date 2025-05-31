@@ -28,7 +28,7 @@ start_test_app() {
   # start the test app whch use framework
   echo "Start test app"
   cd tests/integration/testapp
-  python main.py &
+  uv run --env-file=.venv-app main.py &
   TEST_APP_PID=$!
   echo "PID=${TEST_APP_PID}"
   jobs
@@ -40,7 +40,7 @@ run_tests() {
   export PYTHONPATH=${PYTHONPATH}:${PWD}/tests/integration/
 
   # run tests
-  python -m pytest --log-cli-level=INFO tests/
+  uv run --env-file=.venv-tools pytest --log-cli-level=INFO tests/
 }
 
 clean_up() {

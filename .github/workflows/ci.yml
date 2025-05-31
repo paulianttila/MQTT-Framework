@@ -44,12 +44,12 @@ jobs:
           uv pip install -r requirements-dev.txt
       - name: Install app dependencies
         run: |
-          uv venv .venv
-          source .venv/bin/activate
+          uv venv .venv-app
+          source .venv-app/bin/activate
           uv pip install -r requirements.txt
 
       - name: Run Ruff
-        run: .venv-tools/bin/ruff check --output-format=github .
+        run: uv run --env-file=.venv-tools ruff check --output-format=github .
 
       - name: Run Black
         run: .venv-tools/bin/black --check --diff .
