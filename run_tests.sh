@@ -28,7 +28,7 @@ start_test_app() {
   # start the test app whch use framework
   echo "Start test app"
   cd tests/integration/testapp
-  uv run --env-file=.venv-app main.py &
+  uv run main.py &
   TEST_APP_PID=$!
   echo "PID=${TEST_APP_PID}"
   jobs
@@ -36,11 +36,14 @@ start_test_app() {
 }
 
 run_tests() {
+
+  # run unit tests
+  uv run pytest --log-cli-level=INFO tests/unit
+
+  # run integration tests
   # add testing_utils.py to tavern tests
   export PYTHONPATH=${PYTHONPATH}:${PWD}/tests/integration/
-
-  # run tests
-  uv run --env-file=.venv-tools pytest --log-cli-level=INFO tests/
+  .venv-tools/bin/tavern-ci tests/integration/tavern
 }
 
 clean_up() {
