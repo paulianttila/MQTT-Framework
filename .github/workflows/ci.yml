@@ -61,7 +61,11 @@ jobs:
         run: |
           sudo apt-get install -y mosquitto
 
-      - name: Run unit and integration tests
+      - name: Run unit tests
+        run: |
+          source .venv-tools/bin/activate
+          python -m pytest --log-cli-level=INFO tests/unit
+      - name: Run integration tests
         run: |
           bash tests/integration/mosquitto/run_mosquitto.sh
           sleep 3
