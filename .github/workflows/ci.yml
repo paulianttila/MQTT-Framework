@@ -65,6 +65,7 @@ jobs:
         run: |
           bash tests/integration/mosquitto/run_mosquitto.sh
           sleep 3
+          source .venv/bin/activate
           bash run_tests.sh
 
       - name: Run code coverage
