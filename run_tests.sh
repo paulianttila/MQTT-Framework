@@ -38,7 +38,7 @@ start_test_app() {
 run_tests() {
 
   # run unit tests
-  #python -m pytest --log-cli-level=INFO tests/unit
+  python -m pytest --log-cli-level=INFO tests/unit
 
   # run integration tests
   # add testing_utils.py to tavern tests
