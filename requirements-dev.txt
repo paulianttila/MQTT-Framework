@@ -159,7 +159,7 @@ pytz==2025.2
     # via
     #   -r requirements.txt
     #   apscheduler
-pyyaml==6.0.2
+pyyaml==6.0.3
     # via
     #   bandit
     #   tavern
