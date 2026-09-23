@@ -13,7 +13,7 @@ attrs==25.3.0
     #   referencing
 bandit[toml]==1.8.3
     # via -r requirements-dev.in
-black==25.1.0
+black==26.3.1
     # via -r requirements-dev.in
 blinker==1.9.0
     # via
