@@ -180,7 +180,7 @@ rpds-py==0.25.1
     #   referencing
 ruamel-yaml==0.18.10
     # via pykwalify
-ruamel-yaml-clib==0.2.12
+ruamel-yaml-clib==0.2.15
     # via ruamel-yaml
 ruff==0.11.11
     # via -r requirements-dev.in
